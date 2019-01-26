@@ -27,10 +27,15 @@ float stressBuffModifier = 1;
 
  float PostasSPS()
  {
-	 return +0.005 * stressModifier;
+	 return +0.006 * stressBuffModifier;
  }
 
  float MoneySP()
  {
 	 return 10 * stressBuffModifier;
+ }
+
+ float BallSP()
+ {
+	 return 15 * stressBuffModifier;
  }

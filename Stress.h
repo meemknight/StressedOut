@@ -12,3 +12,5 @@
  float PostasSPS();
 
  float MoneySP();
+
+ float BallSP();

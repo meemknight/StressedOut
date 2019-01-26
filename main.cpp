@@ -19,7 +19,7 @@ int main()
 	srand(time(0));
 
 
-	sf::RenderWindow window(sf::VideoMode(200, 200), "Stressed Out!", sf::Style::Fullscreen);
+	sf::RenderWindow window(sf::VideoMode(600, 600), "Stressed Out!", sf::Style::Fullscreen);
 	//window.setFramerateLimit(50);
 	window.setVerticalSyncEnabled(1);
 	int screenWith = window.getSize().x;
@@ -40,16 +40,16 @@ int main()
 	sf::View view(sf::FloatRect(0, 0, window.getSize().x, window.getSize().y));
 	
 
-	mosTexture.loadFromFile("mos.png");
+	mosTexture.loadFromFile("Anim\\mosAnimat.png");
 	textures.loadFromFile("textures.png");
-	fantomaTexture.loadFromFile("fantomaSoacraNou.png");
-	copilTexture.loadFromFile("copil.png");
-	postasTexture.loadFromFile("postasNou.png");
+	fantomaTexture.loadFromFile("Anim\\fantoma soacra.png");
+	copilTexture.loadFromFile("Anim\\plod.png");
+	postasTexture.loadFromFile("Anim\\postas.png");
 	itemsTextures.loadFromFile("items.png");
 	baraTexture.loadFromFile("bar.png");
 	angryTexture.loadFromFile("stress.png");
 	dolarTexture.loadFromFile("dolar.png");
-	colectorTexture.loadFromFile("recuperatorNou.png");
+	colectorTexture.loadFromFile("Anim\\recuperator.png");
 
 	mapSprite.setTexture(textures);
 	
@@ -83,16 +83,16 @@ int main()
 
 	Entity postas(&postasTexture);
 	bool postasExists = 0;
-	float postasTime = GetTickCount() + rand() % 12000 + 10000;
+	float postasTime = GetTickCount() + rand() % 12000 + 12000;
 	postas.speed = 0.20f;
-	float postasMoveTime = 0;
-	postas.setPosition({ 80 * 34 + rand() % 160, -90 });
+	float postasMoveTime = GetTickCount();
+	postas.setPosition({ 80 * 30 + rand() % 160, -90 });
 	bool postasMoves = 1;
 
 	Entity colector(&colectorTexture);
-	colector.setPosition(sf::Vector2i((MAPLENGTH - 5) * 80 + 80, rand()%(80*5)+(80*2)));
-	bool collectorActive = 0;
-	float collectorTime = GetTickCount() + rand() % 25000; +25000;
+	colector.setPosition(sf::Vector2i((MAPLENGTH - 7) * 80 , (rand()%(80*5))+(80*2)));
+	bool collectorActive = 1;
+	float collectorTime = GetTickCount() + rand() % 15000; +15000;
 	sf::Vector2i collectorDirection = { 0,0 };
 	colector.speed = 0.35f;
 	float collectorMoveTime = 0;
@@ -186,7 +186,6 @@ int main()
 
 		fixCollisionWall(mos);
 		fixCollision(mos);
-		updateMovement(mos);
 
 
 		view.setCenter((int)mos.getPosition().x, (int)mos.getPosition().y);
@@ -225,7 +224,7 @@ int main()
 
 
 			pill.calculatePadding(GetTickCount());
-			pill.draw(&window);
+			pill.draw(&window, deltaTime);
 
 		
 		}
@@ -247,7 +246,7 @@ int main()
 
 		if(ballExists)
 		{
-			ball.draw(&window);
+			ball.draw(&window, deltaTime);
 			
 			if(currentItem == items::fork)
 			{
@@ -256,6 +255,7 @@ int main()
 					ballExists = 0;
 					ballTime = GetTickCount() + rand() % 25000 + 15000;
 					currentItem = 0;
+					stressValue += BallSP();
 				}
 			}
 				
@@ -269,7 +269,7 @@ int main()
 		}
 
 		fork.calculatePadding(GetTickCount());
-		fork.draw(&window);
+		fork.draw(&window, deltaTime);
 
 
 
@@ -300,7 +300,7 @@ int main()
 
 
 				money[i].calculatePadding(GetTickCount());
-				money[i].draw(&window);
+				money[i].draw(&window, deltaTime);
 
 
 			}
@@ -318,6 +318,10 @@ int main()
 					
 			}else
 			{
+
+				colector.setPosition(sf::Vector2i(80 * (MAPLENGTH - 2), rand() % 1000 + 10));
+				collectorMoveTime = rand() % 2000 + 1000;
+				collectorDirection = { -1, 0 };
 				collectorActive = 1;
 			}
 		}
@@ -404,14 +408,15 @@ int main()
 			colector.autoMove(collectorDirection, deltaTime);
 			fixCollision(colector);
 
-			updateMovement(colector);
-			colector.draw(&window);
+			
+			colector.draw(&window, deltaTime);
 		}
 
 		if(colector.position.y < -70 || colector.position.y > (MAPHEIGHT-1) * 80 || colector.position.x > MAPLENGTH * 80)
 		{
 			collectorActive = 0;
-			collectorTime = GetTickCount() + rand() % 25000 + 25000;
+			collectorTime = GetTickCount() + rand() % 21000 + 12000;
+			colector.setPosition(sf::Vector2i((MAPLENGTH - 7) * 80, (rand() % (80 * 5)) + (80 * 2)));
 		}
 
 
@@ -493,12 +498,11 @@ int main()
 
 			//fixCollisionWall(postas);
 			fixCollision(postas);
-			updateMovement(postas);
-			postas.draw(&window);
+			postas.draw(&window, deltaTime);
 			
 			if (colides(&mos, &postas)) 
 			{
-				
+				moneyValue += PostasSPS() * deltaTime;
 			}
 
 		}else if(GetTickCount() > postasTime )
@@ -509,19 +513,16 @@ int main()
 		if(postas.getPosition().y > MAPHEIGHT * 80 + 20)
 		{
 			postasExists = 0;
-			postasTime = GetTickCount() + rand() % 15000 + 10000;
-			postas.setPosition({ 80 * 34 + rand() % 160, -90 });
+			postasTime = GetTickCount() + rand() % 15000 + 5000;
+			postas.setPosition({ 80 * 30 + rand() % 160, -90 });
 		}
-
-		
 
 
 		copil.autoMove(copilDIrection, deltaTime);
 
 		fixCollisionWall(copil);
 		fixCollision(copil);
-		updateMovement(copil);
-		copil.draw(&window);
+		copil.draw(&window, deltaTime);
 
 
 #pragma region Fantoma
@@ -618,7 +619,7 @@ int main()
 
 			if (fantoma.getPosition().x >= (GARDENSTART-1) * 80)
 			{
-				if (fantomaDirection.x == 1)
+				//if (fantomaDirection.x == 1)
 				{
 					fantomaDirection.x = -1;
 				}
@@ -627,8 +628,7 @@ int main()
 			fantoma.autoMove(fantomaDirection, deltaTime);
 
 			fixCollisionWall(fantoma);
-			updateMovement(fantoma);
-			fantoma.draw(&window);
+			fantoma.draw(&window, deltaTime);
 
 			if (colides(&mos, &fantoma))
 			{
@@ -640,7 +640,7 @@ int main()
 
 
 		window.setView(view);
-		mos.draw(&window);
+		mos.draw(&window, deltaTime);
 		
 		if (stressValue > 100.f) { stressValue = 100; }
 		stressBar.padding = {(int)view.getCenter().x - screenWith / 2, (int)view.getCenter().y - screenHeight /2};
@@ -656,6 +656,8 @@ int main()
 
 		window.display();
 
+		//std::cout << colector.getPosition().x / 80 << " " << colector.getPosition().y /80 << " "<< mos.getPosition().x /80 <<" " << mos.getPosition().y/80 <<" " << collectorActive <<"\n";
+		
 		window.clear();
 	}
 

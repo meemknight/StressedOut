@@ -309,9 +309,41 @@ void Item::calculatePadding(float time)
 
 }
 
-void Item::draw(sf::RenderWindow * window)
-{
+void Item::draw(sf::RenderWindow * window, float deltatime)
+{	
+	
 	sprite.setPosition({ (float)position.x, (float)position.y + paddingPosition });
 	window->draw(sprite);
 
+}
+
+void Entity::draw(sf::RenderWindow * window, float deltatime)
+{
+	
+	if (animationProgress + deltatime > frameSize)
+	{
+		animationProgress = frameSize - animationProgress;
+		currentFrame++;
+	}
+	else 
+	{
+		animationProgress += deltatime;
+	};
+	
+	if(currentFrame >= 5)
+	{
+		currentFrame = 0;
+	}
+
+	if(lastpos == position)
+	{
+		setTextureRect(sprite, currentFrame, 0, !movingright);
+	}else
+	{
+		setTextureRect(sprite, currentFrame, 1, !movingright);
+	}
+
+	updateMovement(*this);
+	sprite.setPosition({ (float)position.x, (float)position.y });
+	window->draw(sprite);
 }

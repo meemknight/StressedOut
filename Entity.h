@@ -4,6 +4,8 @@
 
 class Entity
 {
+	float animationProgress = 0;
+	int currentFrame = 0;
 public:
 	Entity() = default;
 	Entity(sf::Texture *texture)
@@ -12,6 +14,8 @@ public:
 	}
 
 	float speed;
+	float frameSize = 120.0;
+
 
 	sf::Sprite sprite;
 	
@@ -42,12 +46,8 @@ public:
 
 	sf::Vector2f sizeofentity = {80.f,80.f};
 
-	virtual void draw(sf::RenderWindow *window)
-	{
-		sprite.setPosition({(float)position.x, (float)position.y});
-		//lastpos = position;
-		window->draw(sprite);
-	}
+	virtual void draw(sf::RenderWindow *window, float deltatime);
+
 
 	void autoMove(sf::Vector2i deplasation, float deltaTime)
 	{
@@ -70,6 +70,7 @@ bool colides(Entity *a, Entity *b);
 
 class Item: public Entity
 {
+	
 public:
 	Item() = default;
 	Item(sf::Texture *t) { sprite.setTexture(*t); };
@@ -79,7 +80,7 @@ public:
 
 	void calculatePadding(float time);
 
-	virtual void draw(sf::RenderWindow *window)override;
+	virtual void draw(sf::RenderWindow *window, float deltatime)override;
 
 };
 
