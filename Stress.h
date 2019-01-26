@@ -7,3 +7,4 @@
 
  float PillSP();
 
+ float CollectorSPS();

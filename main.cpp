@@ -89,8 +89,12 @@ int main()
 	postas.setPosition({ 80 * 34 + rand() % 160, -90 });
 	bool postasMoves = 1;
 
-	Entity colector()
-
+	Entity colector(&colectorTexture);
+	colector.setPosition(sf::Vector2i((MAPLENGTH - 5) * 80 + 80, rand()%(80*5)+(80*2)));
+	bool collectorActive = 1;
+	float collectorTime = GetTickCount() + rand() % 10000; +10000;
+	sf::Vector2i collectorDirection = { 0,0 };
+	colector.speed = 0.35f;
 
 	Entity mos(&mosTexture);
 	mos.position = { 100,100 };
@@ -218,7 +222,6 @@ int main()
 		if (fantomaAwake)
 		{
 
-
 			if (mos.getPosition().x < GARDENSTART * 80)
 			{
 				if (abs(mos.getcenterx() - fantoma.getcenterx()) < 30)
@@ -312,7 +315,74 @@ int main()
 		}
 #pragma endregion
 	
+#pragma region Collector
+		
+		if(GetTickCount() > collectorTime)
+		{
+			if(collectorActive)
+			{
+					
+			}else
+			{
+				collectorActive = 1;
+			}
+		}
+		
+		if (mos.getPosition().x > GARDENSTART * 80)
+		{
+			if (abs(mos.getcenterx() - colector.getcenterx()) < 30)
+			{
+				collectorDirection.x = 0;
+			}
+			else if (mos.getPosition().x > colector.getPosition().x)
+			{
+				collectorDirection.x = 1;
+			}
+			else
+			{
+				collectorDirection.x = -1;
+			}
+			if (abs(mos.getcentery() - colector.getcentery()) < 30)
+			{
+				collectorDirection.y = 0;
+			}
+			else if (mos.getPosition().y > colector.getPosition().y)
+			{
+				collectorDirection.y = 1;
+			}
+			else
+			{
+				collectorDirection.y = -1;
+			}
+		}
+		else 
+		{
+			collectorDirection = { 0,0 };
+		}
+
+		//if (colector.getPosition().x < (GARDENSTART - 1) * 80)
+		//{
+		//	if (collectorDirection.x == -1)
+		//	{
+		//		collectorDirection.x = 1;
+		//	}
+		//}
+
+		colector.autoMove(collectorDirection, deltaTime);
+
+		updateMovement(colector);
+		colector.draw(&window);
+
+		if (colides(&mos, &colector))
+		{
+			moneyValue += CollectorSPS() * deltaTime;
+		}
 	
+		
+
+#pragma endregion
+
+
 		if (GetTickCount() > copilTime)
 		{
 			copilTime = GetTickCount() + rand() % 500;

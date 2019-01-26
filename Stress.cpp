@@ -20,3 +20,7 @@ float stressBuffModifier = 1;
 	return 30 * stressBuffModifier;
 }
 
+ float CollectorSPS()
+ {
+	 return -0.005 * stressModifier;
+ }
