@@ -9,11 +9,13 @@ void setTextureRect(sf::Sprite &s, int x, int y = 0);
 
 enum tiles
 {
-none,		//@
-woddenFloor, //A
-grass,		 //B
-concreteFloor,//C
-brickWall,		//D
-FenceVertically,//E
+none,		
+woddenFloor,
+grass,		 
+concreteFloor,
+concreteFloor2,
+nonelol,
+brickWall = 16,
+FenceVertically,
 
 };
