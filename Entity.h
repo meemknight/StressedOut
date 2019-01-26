@@ -53,3 +53,8 @@ public:
 };
 
 void fixCollision(Entity &entity);
+void fixCollisionWall(Entity &entity);
+void updateMovement(Entity &entity);
+
+
+

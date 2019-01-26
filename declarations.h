@@ -7,6 +7,7 @@
 void handleEvents(sf::RenderWindow &window);
 void setTextureRect(sf::Sprite &s, int x, int y = 0);
 
+
 enum tiles
 {
 none,		

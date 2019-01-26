@@ -263,6 +263,14 @@ void fixCollision(Entity &entity)
 	}
 
 
+	
+		
+}
+
+
+
+void fixCollisionWall(Entity &entity)
+{
 	///fix player position
 	if (entity.position.x < 0) { entity.position.x = 0; }
 	if (entity.position.x + entity.sizeofentity.x > 80 * MAPLENGTH) { entity.position.x = 80 * MAPLENGTH - entity.sizeofentity.x; }
@@ -270,9 +278,11 @@ void fixCollision(Entity &entity)
 	if (entity.position.y + entity.sizeofentity.y > 80 * MAPHEIGHT) { entity.position.y = 80 * MAPHEIGHT - entity.sizeofentity.y; }
 
 
+
+}
+
+void updateMovement(Entity &entity)
+{
 	entity.lastpos.x = entity.position.x;
 	entity.lastpos.y = entity.position.y;
-
-
-		
 }
