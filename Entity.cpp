@@ -286,3 +286,32 @@ void updateMovement(Entity &entity)
 	entity.lastpos.x = entity.position.x;
 	entity.lastpos.y = entity.position.y;
 }
+
+bool colides(Entity * a, Entity * b)
+{
+	deltax = a->getcenterx() - b->getcenterx();
+	deltay = a->getcentery() - b->getcentery();
+	intersectx = abs(deltax) - (a->sizeofentity.x / 2 + b->sizeofentity.x / 2);
+	intersecty = abs(deltay) - (a->sizeofentity.y / 2 + b->sizeofentity.y / 2);
+	if(intersectx <= 0.f && intersecty <= 0.f)
+	{
+		return 1;
+	}else
+	{
+		return 0;
+	}
+}
+
+void Item::calculatePadding(float time)
+{
+
+	paddingPosition = sin(time / 200) * 20;
+
+}
+
+void Item::draw(sf::RenderWindow * window)
+{
+	sprite.setPosition({ (float)position.x, (float)position.y + paddingPosition });
+	window->draw(sprite);
+
+}

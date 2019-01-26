@@ -42,19 +42,46 @@ public:
 
 	sf::Vector2f sizeofentity = {80.f,80.f};
 
-	void draw(sf::RenderWindow *window)
+	virtual void draw(sf::RenderWindow *window)
 	{
 		sprite.setPosition({(float)position.x, (float)position.y});
 		//lastpos = position;
 		window->draw(sprite);
 	}
 
-
+	void autoMove(sf::Vector2i deplasation, float deltaTime)
+	{
+		if (deplasation.x != 0 && deplasation.y != 0)
+		{
+			setPosition({ getPosition().x + (int)(deplasation.x * deltaTime * speed / (float)sqrt(2)), getPosition().y + (int)(deplasation.y * deltaTime * speed / (float)sqrt(2)) });
+		}
+		else
+		{
+			setPosition({ getPosition().x + (int)(deplasation.x * deltaTime * speed), getPosition().y + (int)(deplasation.y * deltaTime * speed) });
+		}
+	}
 };
 
 void fixCollision(Entity &entity);
 void fixCollisionWall(Entity &entity);
 void updateMovement(Entity &entity);
+bool colides(Entity *a, Entity *b);
+
+
+class Item: public Entity
+{
+public:
+	Item() = default;
+	Item(sf::Texture *t) { sprite.setTexture(*t); };
+
+	
+	float paddingPosition = 0;
+
+	void calculatePadding(float time);
+
+	virtual void draw(sf::RenderWindow *window)override;
+
+};
 
 
 

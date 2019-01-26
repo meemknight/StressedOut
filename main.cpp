@@ -7,6 +7,8 @@
 #include <Windows.h>
 #include <ctime>
 #include <cstdlib>
+#include "Bar.h"
+#include "Stress.h"
 
 unsigned char map[MAPLENGTH][MAPHEIGHT];
 extern sf::Sprite mapSprite;
@@ -20,12 +22,20 @@ int main()
 	sf::RenderWindow window(sf::VideoMode(200, 200), "Stressed Out!", sf::Style::Fullscreen);
 	//window.setFramerateLimit(50);
 	window.setVerticalSyncEnabled(1);
-	sf::CircleShape shape(100.f);
-	shape.setFillColor(sf::Color::Green);
+	int screenWith = window.getSize().x;
+	int screenHeight = window.getSize().y;
+
 
 	sf::Texture mosTexture;
 	sf::Texture textures;
 	sf::Texture fantomaTexture;
+	sf::Texture copilTexture;
+	sf::Texture postasTexture;
+	sf::Texture itemsTextures;
+	sf::Texture baraTexture;
+	sf::Texture angryTexture;
+	sf::Texture dolarTexture;
+	sf::Texture colectorTexture;
 
 	sf::View view(sf::FloatRect(0, 0, window.getSize().x, window.getSize().y));
 	
@@ -33,10 +43,24 @@ int main()
 	mosTexture.loadFromFile("mos.png");
 	textures.loadFromFile("textures.png");
 	fantomaTexture.loadFromFile("fantoma soacra.png");
+	copilTexture.loadFromFile("copil.png");
+	postasTexture.loadFromFile("postas.png");
+	itemsTextures.loadFromFile("items.png");
+	baraTexture.loadFromFile("bar.png");
+	angryTexture.loadFromFile("stress.png");
+	dolarTexture.loadFromFile("dolar.png");
+	colectorTexture.loadFromFile("recuperator.png");
 
 	mapSprite.setTexture(textures);
 	
 
+	Bar stressBar(&baraTexture, &angryTexture, sf::Color::Red ,{screenWith - 80 * 6, screenHeight - 100 * 1});
+	float stressValue = 100;
+	float moneyValue = 100;
+	stressBar.value = &stressValue;
+
+	Bar moneyBar(&baraTexture, &dolarTexture, sf::Color::Green, { screenWith - 80 * 6, screenHeight - 50 * 1 });
+	moneyBar.value = &moneyValue;
 
 	loadMap("map.txt");
 	
@@ -46,10 +70,26 @@ int main()
 	fantoma.setPosition({ 20 * 80, 80 });
 	float fantomaTime = (rand() %35000) + 5000 + GetTickCount();
 	bool fantomaAwake = 1;
-	
-	
+	float fantomaMoveTime = GetTickCount();
+	bool fantomaMoves = 1;
+	sf::Vector2i fantomaDirection = { 0,0 };
 	//fantoma
 
+	Entity copil(&copilTexture);
+	copil.speed = 0.6;
+	copil.setPosition({80 * 14, 4 * 80});
+	sf::Vector2i copilDIrection = { 0,0 };
+	float copilTime = GetTickCount();
+
+	Entity postas(&postasTexture);
+	bool postasExists = 0;
+	float postasTime = GetTickCount() + rand() % 12000 + 10000;
+	postas.speed = 0.20f;
+	float postasMoveTime = 0;
+	postas.setPosition({ 80 * 34 + rand() % 160, -90 });
+	bool postasMoves = 1;
+
+	Entity colector()
 
 
 	Entity mos(&mosTexture);
@@ -59,8 +99,14 @@ int main()
 	float time = GetTickCount();
 	float deltaTime = 0;
 
-	int screenWith = window.getSize().x;
-	int screenHeight = window.getSize().y;
+
+
+	Item pill(&itemsTextures);
+	setTextureRect(pill.sprite, 2, 0);
+	pill.setPosition({ 1 * 80, 17 * 80 });
+	bool pillExists = 1;
+	float pillTime = GetTickCount() + rand() % 5000 + 7000;
+
 
 	while (window.isOpen())
 	{
@@ -119,10 +165,6 @@ int main()
 		}
 
 
-
-
-		//fantoma
-
 		fixCollisionWall(mos);
 		fixCollision(mos);
 		updateMovement(mos);
@@ -139,52 +181,242 @@ int main()
 
 		drawMap(&window);
 
-		if(fantomaAwake)
+
+		if(GetTickCount() > pillTime)
 		{
-			sf::Vector2i deplasation = { 0,0 };
-			if (abs(mos.getcenterx() - fantoma.getcenterx()) < 30)
+			if(pillExists)
 			{
-				deplasation.x = 0;
-			}
-			else if(mos.getPosition().x > fantoma.getPosition().x)
-			{
-				deplasation.x = 1;
+				pillExists = 0;
+				pillTime = GetTickCount() + rand()%10000 + 15000;
 			}else
 			{
-				deplasation.x = -1;
+				pillExists = 1;
+				pillTime = GetTickCount() + rand() % 10000 + 5000;
 			}
-			if (abs(mos.getcentery() - fantoma.getcentery()) < 30)
+		}
+
+		if(pillExists)
+		{
+			if(colides(&mos, &pill))
 			{
-				deplasation.y = 0;
-			}
-			else if (mos.getPosition().y > fantoma.getPosition().y)
-			{
-				deplasation.y = 1;
-			}
-			else
-			{
-				deplasation.y = -1;
+				pillExists = 0;
+				pillTime = GetTickCount() + rand() % 10000 + 15000;
+				stressValue += PillSP();
 			}
 
-			if (deplasation.x != 0 && deplasation.y != 0)
+
+			pill.calculatePadding(GetTickCount());
+			pill.draw(&window);
+
+		
+		}
+
+
+
+
+#pragma region Fantoma
+		if (fantomaAwake)
+		{
+
+
+			if (mos.getPosition().x < GARDENSTART * 80)
 			{
-				fantoma.setPosition({ fantoma.getPosition().x + (int)(deplasation.x * deltaTime * fantoma.speed / (float)sqrt(2)), fantoma.getPosition().y + (int)(deplasation.y * deltaTime * fantoma.speed / (float)sqrt(2)) });
+				if (abs(mos.getcenterx() - fantoma.getcenterx()) < 30)
+				{
+					fantomaDirection.x = 0;
+				}
+				else if (mos.getPosition().x > fantoma.getPosition().x)
+				{
+					fantomaDirection.x = 1;
+				}
+				else
+				{
+					fantomaDirection.x = -1;
+				}
+				if (abs(mos.getcentery() - fantoma.getcentery()) < 30)
+				{
+					fantomaDirection.y = 0;
+				}
+				else if (mos.getPosition().y > fantoma.getPosition().y)
+				{
+					fantomaDirection.y = 1;
+				}
+				else
+				{
+					fantomaDirection.y = -1;
+				}
+
 			}
 			else
 			{
-				fantoma.setPosition({ fantoma.getPosition().x + (int)(deplasation.x * deltaTime * fantoma.speed), fantoma.getPosition().y + (int)(deplasation.y * deltaTime * fantoma.speed) });
+				if (GetTickCount() > fantomaMoveTime)
+				{
+					fantomaMoveTime += rand() % 3000 + 1000;
+					if (fantomaMoves) { fantomaMoves = 0; fantomaDirection = { 0,0 }; }
+					else
+					{
+						fantomaMoves = 1;
+						int r = rand() % 3;
+						if (r == 0)
+						{
+							fantomaDirection.x = 1;
+						}
+						else if (r == 1)
+						{
+							fantomaDirection.x = -1;
+						}
+						else
+						{
+							fantomaDirection.x = 0;
+						}
+
+						r = rand() % 3;
+						if (r == 0)
+						{
+							fantomaDirection.y = 1;
+						}
+						else if (r == 1)
+						{
+							fantomaDirection.y = -1;
+						}
+						else
+						{
+							fantomaDirection.y = 0;
+						}
+					}
+
+				}
+				
+				
+
 			}
+
+			if (fantoma.getPosition().x >= (GARDENSTART - 1) * 80)
+			{
+				if (fantomaDirection.x == 1)
+				{
+					fantomaDirection.x = -1;
+				}
+			}
+
+			fantoma.autoMove(fantomaDirection, deltaTime);
 
 			fixCollisionWall(fantoma);
 			updateMovement(fantoma);
 			fantoma.draw(&window);
+
+			if (colides(&mos, &fantoma))
+			{
+				stressValue += GhostSPS() * deltaTime;
+			}
+		}
+#pragma endregion
+	
+	
+		if (GetTickCount() > copilTime)
+		{
+			copilTime = GetTickCount() + rand() % 500;
+			int r = rand() % 3;
+			if (r == 0)
+			{
+				copilDIrection.x = 1;
+			}
+			else if (r == 1)
+			{
+				copilDIrection.x = -1;
+			}
+			else
+			{
+				copilDIrection.x = 0;
+			}
+
+			r = rand() % 3;
+			if (r == 0)
+			{
+				copilDIrection.y = 1;
+			}
+			else if (r == 1)
+			{
+				copilDIrection.y = -1;
+			}
+			else
+			{
+				copilDIrection.y = 0;
+			}
+
+		}
+
+		if (copil.getPosition().x >= (GARDENSTART -1 ) * 80)
+		{
+			if (copilDIrection.x == 1)
+			{
+				copilDIrection.x = -1;
+			}
+		}
+
+		if(colides(&mos, &copil))
+		{
+			stressValue += ChildSPS();
+		}
+
+
+		if(postasExists)
+		{
+			if(postasMoves)
+			{
+				postas.autoMove({ 0,1 }, deltaTime);
+			}
+			
+			if(GetTickCount() > postasMoveTime)
+			{
+				postasMoveTime = GetTickCount() + rand() % 4000;
+				if(postasMoves)
+				{
+					postasMoves = 0;
+				}else
+				{
+					postasMoves = 1;
+				}
+			}
+
+			//fixCollisionWall(postas);
+			fixCollision(postas);
+			updateMovement(postas);
+			postas.draw(&window);
+		
+		}else if(GetTickCount() > postasTime )
+		{
+			postasExists = 1;
+		}
+
+		if(postas.getPosition().y > MAPHEIGHT * 80 + 20)
+		{
+			postasExists = 0;
+			postasTime = GetTickCount() + rand() % 15000 + 10000;
+			postas.setPosition({ 80 * 34 + rand() % 160, -90 });
 		}
 
 		
 
+
+		copil.autoMove(copilDIrection, deltaTime);
+
+		fixCollisionWall(copil);
+		fixCollision(copil);
+		updateMovement(copil);
+		copil.draw(&window);
+
 		window.setView(view);
 		mos.draw(&window);
 		
+		
+		if (stressValue > 100.f) { stressValue = 100; }
+		stressBar.padding = {(int)view.getCenter().x - screenWith / 2, (int)view.getCenter().y - screenHeight /2};
+		stressBar.draw(&window);
+
+		moneyBar.padding = { (int)view.getCenter().x - screenWith / 2, (int)view.getCenter().y - screenHeight / 2 };
+		moneyBar.draw(&window);
+
 		window.display();
 
 		window.clear();

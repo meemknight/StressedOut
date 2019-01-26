@@ -2,6 +2,7 @@
 #include <SFML\Graphics.hpp>
 #define MAPHEIGHT 20
 #define MAPLENGTH 40
+#define GARDENSTART 20
 
 
 void handleEvents(sf::RenderWindow &window);
@@ -18,5 +19,15 @@ concreteFloor2,
 nonelol,
 brickWall = 16,
 FenceVertically,
+
+};
+
+
+enum items
+{
+noneItem,
+footBall,
+pill,
+fork,
 
 };
