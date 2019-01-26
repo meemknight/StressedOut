@@ -1,7 +1,7 @@
 #pragma once
 #include <SFML\Graphics.hpp>
 #define MAPHEIGHT 20
-#define MAPLENGTH 40
+#define MAPLENGTH 36
 #define GARDENSTART 20
 
 
@@ -29,5 +29,5 @@ noneItem,
 footBall,
 pill,
 fork,
-
+dolar,
 };

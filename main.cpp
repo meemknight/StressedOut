@@ -42,14 +42,14 @@ int main()
 
 	mosTexture.loadFromFile("mos.png");
 	textures.loadFromFile("textures.png");
-	fantomaTexture.loadFromFile("fantoma soacra.png");
+	fantomaTexture.loadFromFile("fantomaSoacraNou.png");
 	copilTexture.loadFromFile("copil.png");
-	postasTexture.loadFromFile("postas.png");
+	postasTexture.loadFromFile("postasNou.png");
 	itemsTextures.loadFromFile("items.png");
 	baraTexture.loadFromFile("bar.png");
 	angryTexture.loadFromFile("stress.png");
 	dolarTexture.loadFromFile("dolar.png");
-	colectorTexture.loadFromFile("recuperator.png");
+	colectorTexture.loadFromFile("recuperatorNou.png");
 
 	mapSprite.setTexture(textures);
 	
@@ -91,10 +91,12 @@ int main()
 
 	Entity colector(&colectorTexture);
 	colector.setPosition(sf::Vector2i((MAPLENGTH - 5) * 80 + 80, rand()%(80*5)+(80*2)));
-	bool collectorActive = 1;
-	float collectorTime = GetTickCount() + rand() % 10000; +10000;
+	bool collectorActive = 0;
+	float collectorTime = GetTickCount() + rand() % 25000; +25000;
 	sf::Vector2i collectorDirection = { 0,0 };
 	colector.speed = 0.35f;
+	float collectorMoveTime = 0;
+	bool collectorMoves = 0;
 
 	Entity mos(&mosTexture);
 	mos.position = { 100,100 };
@@ -111,6 +113,32 @@ int main()
 	bool pillExists = 1;
 	float pillTime = GetTickCount() + rand() % 5000 + 7000;
 
+	Item money[2] = { &itemsTextures , &itemsTextures };
+	money[0].position = sf::Vector2i(23 * 80, 5 * 80);
+	money[1].position = sf::Vector2i(23 * 80, 15 * 80);
+	
+	bool moneyExists[2] = {1,1};
+	float moneyTime[2] = { GetTickCount() + rand() % 5000 + 7000,  GetTickCount() + rand() % 5000 + 7000};
+	
+	for(int i=0; i<sizeof(money)/sizeof(Item); i++)
+	{
+		setTextureRect(money[i].sprite, items::dolar, 0 );
+	}
+
+	Item fork(&itemsTextures);
+	fork.setPosition(sf::Vector2i{1 * 80, 2 * 80});
+	setTextureRect(fork.sprite, items::fork, 0);
+
+	Item ball(&itemsTextures);
+	ball.setPosition(sf::Vector2i(25 * 80, 6 * 80));
+	setTextureRect(ball.sprite, items::footBall, 0);
+	bool ballExists = 1;
+	float ballTime = GetTickCount() + rand() % 10000 + 10000;
+
+	sf::Sprite currentItemSprite;
+	currentItemSprite.setTexture(itemsTextures);
+	currentItemSprite.setPosition(sf::Vector2f(10, screenHeight - 40));
+	int currentItem = 0;
 
 	while (window.isOpen())
 	{
@@ -153,20 +181,7 @@ int main()
 
 		//view.setViewport(sf::FloatRect( mos.sprite.getPosition().x - (window.getSize().x /2.f), mos.sprite.getPosition().y - (window.getSize().y / 2.f), window.getSize().x, window.getSize().y ));
 	
-		//fantoma
-		if(GetTickCount() > fantomaTime)
-		{
-			fantomaTime = (rand() % 25000) + 5000 + GetTickCount();
-			if(fantomaAwake)
-			{
-				fantomaAwake = 0;
-			}else
-			{
-				fantomaAwake = 1;
-			}
-
-			fantoma.setPosition({ 20 * 80, 80 });
-		}
+	
 
 
 		fixCollisionWall(mos);
@@ -215,106 +230,85 @@ int main()
 		
 		}
 
-
-
-
-#pragma region Fantoma
-		if (fantomaAwake)
+		
+		if(GetTickCount() > ballTime)
 		{
-
-			if (mos.getPosition().x < GARDENSTART * 80)
+			if(ballExists)
 			{
-				if (abs(mos.getcenterx() - fantoma.getcenterx()) < 30)
+				ballExists = 0;
+				ballTime = GetTickCount() + rand() % 20000 + 15000;
+			}else
+			{
+				ballExists = 1;
+				ballTime = GetTickCount() + rand() % 80000 + 8000;
+			}
+		
+		}
+
+		if(ballExists)
+		{
+			ball.draw(&window);
+			
+			if(currentItem == items::fork)
+			{
+				if (colides(&mos, &ball))
 				{
-					fantomaDirection.x = 0;
+					ballExists = 0;
+					ballTime = GetTickCount() + rand() % 25000 + 15000;
+					currentItem = 0;
 				}
-				else if (mos.getPosition().x > fantoma.getPosition().x)
+			}
+				
+		}
+
+
+
+		if(colides(&mos, &fork))
+		{
+			currentItem = items::fork;
+		}
+
+		fork.calculatePadding(GetTickCount());
+		fork.draw(&window);
+
+
+
+		for(int i=0; i<sizeof(money) / sizeof(Item); i++)
+		{
+			if (GetTickCount() > moneyTime[i])
+			{
+				if (pillExists)
 				{
-					fantomaDirection.x = 1;
+					moneyExists[i] = 0;
+					moneyTime[i]= GetTickCount() + rand() % 15000 + 15000;
 				}
 				else
 				{
-					fantomaDirection.x = -1;
-				}
-				if (abs(mos.getcentery() - fantoma.getcentery()) < 30)
-				{
-					fantomaDirection.y = 0;
-				}
-				else if (mos.getPosition().y > fantoma.getPosition().y)
-				{
-					fantomaDirection.y = 1;
-				}
-				else
-				{
-					fantomaDirection.y = -1;
-				}
-
-			}
-			else
-			{
-				if (GetTickCount() > fantomaMoveTime)
-				{
-					fantomaMoveTime += rand() % 3000 + 1000;
-					if (fantomaMoves) { fantomaMoves = 0; fantomaDirection = { 0,0 }; }
-					else
-					{
-						fantomaMoves = 1;
-						int r = rand() % 3;
-						if (r == 0)
-						{
-							fantomaDirection.x = 1;
-						}
-						else if (r == 1)
-						{
-							fantomaDirection.x = -1;
-						}
-						else
-						{
-							fantomaDirection.x = 0;
-						}
-
-						r = rand() % 3;
-						if (r == 0)
-						{
-							fantomaDirection.y = 1;
-						}
-						else if (r == 1)
-						{
-							fantomaDirection.y = -1;
-						}
-						else
-						{
-							fantomaDirection.y = 0;
-						}
-					}
-
-				}
-				
-				
-
-			}
-
-			if (fantoma.getPosition().x >= (GARDENSTART - 1) * 80)
-			{
-				if (fantomaDirection.x == 1)
-				{
-					fantomaDirection.x = -1;
+					moneyExists[i] = 1;
+					moneyTime[i] = GetTickCount() + rand() % 5000 + 5000;
 				}
 			}
 
-			fantoma.autoMove(fantomaDirection, deltaTime);
-
-			fixCollisionWall(fantoma);
-			updateMovement(fantoma);
-			fantoma.draw(&window);
-
-			if (colides(&mos, &fantoma))
+			if (moneyExists[i])
 			{
-				stressValue += GhostSPS() * deltaTime;
+				if (colides(&mos, &money[i]))
+				{
+					moneyExists[i] = 0;
+					moneyTime[i] = GetTickCount() + rand() % 15000 + 8000;
+					moneyValue += MoneySP();
+				}
+
+
+				money[i].calculatePadding(GetTickCount());
+				money[i].draw(&window);
+
+
 			}
 		}
-#pragma endregion
-	
+
+
+
+
 #pragma region Collector
 		
 		if(GetTickCount() > collectorTime)
@@ -328,50 +322,98 @@ int main()
 			}
 		}
 		
-		if (mos.getPosition().x > GARDENSTART * 80)
+		if(collectorActive)
 		{
-			if (abs(mos.getcenterx() - colector.getcenterx()) < 30)
+			if (mos.getPosition().x >= (GARDENSTART - 1) * 80)
 			{
-				collectorDirection.x = 0;
-			}
-			else if (mos.getPosition().x > colector.getPosition().x)
-			{
-				collectorDirection.x = 1;
+				if (abs(mos.getcenterx() - colector.getcenterx()) < 30)
+				{
+					collectorDirection.x = 0;
+				}
+				else if (mos.getPosition().x > colector.getPosition().x)
+				{
+					collectorDirection.x = 1;
+				}
+				else
+				{
+					collectorDirection.x = -1;
+				}
+				if (abs(mos.getcentery() - colector.getcentery()) < 30)
+				{
+					collectorDirection.y = 0;
+				}
+				else if (mos.getPosition().y > colector.getPosition().y)
+				{
+					collectorDirection.y = 1;
+				}
+				else
+				{
+					collectorDirection.y = -1;
+				}
 			}
 			else
 			{
-				collectorDirection.x = -1;
+				//collectorDirection = { 0,0 };
+				if (GetTickCount() > collectorMoveTime)
+				{
+					collectorMoveTime = GetTickCount() + rand() % 3000;
+					if (collectorMoves) { collectorMoves = 0; collectorDirection = { 0,0 }; }
+					else
+					{
+						collectorMoves = 1;
+						int r = rand() % 5;
+						if (r == 0)
+						{
+							collectorDirection.x = 0;
+						}
+						else if (r == 1)
+						{
+							collectorDirection.x = -1;
+						}
+						else
+						{
+							collectorDirection.x = 1;
+						}
+
+						r = rand() % 3;
+						if (r == 0)
+						{
+							collectorDirection.y = 1;
+						}
+						else if (r == 1)
+						{
+							collectorDirection.y = -1;
+						}
+						else
+						{
+							collectorDirection.y = 0;
+						}
+					}
+
+				}
 			}
-			if (abs(mos.getcentery() - colector.getcentery()) < 30)
+
+			if (colector.getPosition().x < (GARDENSTART - 1) * 80)
 			{
-				collectorDirection.y = 0;
+				if (collectorDirection.x == -1)
+				{
+					collectorDirection.x = 1;
+				}
 			}
-			else if (mos.getPosition().y > colector.getPosition().y)
-			{
-				collectorDirection.y = 1;
-			}
-			else
-			{
-				collectorDirection.y = -1;
-			}
+
+			colector.autoMove(collectorDirection, deltaTime);
+			fixCollision(colector);
+
+			updateMovement(colector);
+			colector.draw(&window);
 		}
-		else 
+
+		if(colector.position.y < -70 || colector.position.y > (MAPHEIGHT-1) * 80 || colector.position.x > MAPLENGTH * 80)
 		{
-			collectorDirection = { 0,0 };
+			collectorActive = 0;
+			collectorTime = GetTickCount() + rand() % 25000 + 25000;
 		}
 
-		//if (colector.getPosition().x < (GARDENSTART - 1) * 80)
-		//{
-		//	if (collectorDirection.x == -1)
-		//	{
-		//		collectorDirection.x = 1;
-		//	}
-		//}
-
-		colector.autoMove(collectorDirection, deltaTime);
-
-		updateMovement(colector);
-		colector.draw(&window);
 
 		if (colides(&mos, &colector))
 		{
@@ -453,7 +495,12 @@ int main()
 			fixCollision(postas);
 			updateMovement(postas);
 			postas.draw(&window);
-		
+			
+			if (colides(&mos, &postas)) 
+			{
+				
+			}
+
 		}else if(GetTickCount() > postasTime )
 		{
 			postasExists = 1;
@@ -476,16 +523,136 @@ int main()
 		updateMovement(copil);
 		copil.draw(&window);
 
+
+#pragma region Fantoma
+		//fantoma
+		if (GetTickCount() > fantomaTime)
+		{
+			fantomaTime = (rand() % 25000) + 5000 + GetTickCount();
+			if (fantomaAwake)
+			{
+				fantomaAwake = 0;
+			}
+			else
+			{
+				fantomaAwake = 1;
+			}
+
+			fantoma.setPosition({ 20 * 80, 80 });
+		}
+
+		if (fantomaAwake)
+		{
+
+			if (mos.getPosition().x < GARDENSTART * 80)
+			{
+				if (abs(mos.getcenterx() - fantoma.getcenterx()) < 30)
+				{
+					fantomaDirection.x = 0;
+				}
+				else if (mos.getPosition().x > fantoma.getPosition().x)
+				{
+					fantomaDirection.x = 1;
+				}
+				else
+				{
+					fantomaDirection.x = -1;
+				}
+				if (abs(mos.getcentery() - fantoma.getcentery()) < 30)
+				{
+					fantomaDirection.y = 0;
+				}
+				else if (mos.getPosition().y > fantoma.getPosition().y)
+				{
+					fantomaDirection.y = 1;
+				}
+				else
+				{
+					fantomaDirection.y = -1;
+				}
+
+			}
+			else
+			{
+				if (GetTickCount() > fantomaMoveTime)
+				{
+					fantomaMoveTime += rand() % 3000 + 1000;
+					if (fantomaMoves) { fantomaMoves = 0; fantomaDirection = { 0,0 }; }
+					else
+					{
+						fantomaMoves = 1;
+						int r = rand() % 3;
+						if (r == 0)
+						{
+							fantomaDirection.x = 1;
+						}
+						else if (r == 1)
+						{
+							fantomaDirection.x = -1;
+						}
+						else
+						{
+							fantomaDirection.x = 0;
+						}
+
+						r = rand() % 3;
+						if (r == 0)
+						{
+							fantomaDirection.y = 1;
+						}
+						else if (r == 1)
+						{
+							fantomaDirection.y = -1;
+						}
+						else
+						{
+							fantomaDirection.y = 0;
+						}
+					}
+
+				}
+
+
+
+			}
+
+			if (fantoma.getPosition().x >= (GARDENSTART-1) * 80)
+			{
+				if (fantomaDirection.x == 1)
+				{
+					fantomaDirection.x = -1;
+				}
+			}
+
+			fantoma.autoMove(fantomaDirection, deltaTime);
+
+			fixCollisionWall(fantoma);
+			updateMovement(fantoma);
+			fantoma.draw(&window);
+
+			if (colides(&mos, &fantoma))
+			{
+				stressValue += GhostSPS() * deltaTime;
+			}
+		}
+#pragma endregion
+
+
+
 		window.setView(view);
 		mos.draw(&window);
-		
 		
 		if (stressValue > 100.f) { stressValue = 100; }
 		stressBar.padding = {(int)view.getCenter().x - screenWith / 2, (int)view.getCenter().y - screenHeight /2};
 		stressBar.draw(&window);
 
+		if (moneyValue > 100.f) { moneyValue = 100; }
 		moneyBar.padding = { (int)view.getCenter().x - screenWith / 2, (int)view.getCenter().y - screenHeight / 2 };
 		moneyBar.draw(&window);
+
+		setTextureRect(currentItemSprite, currentItem, 0);
+		currentItemSprite.setPosition(sf::Vector2f{ (float)view.getCenter().x - screenWith / 2 + 10, (float)view.getCenter().y - screenHeight / 2 + screenHeight - 80 });
+		window.draw(currentItemSprite);
 
 		window.display();
 

@@ -8,3 +8,7 @@
  float PillSP();
 
  float CollectorSPS();
+
+ float PostasSPS();
+
+ float MoneySP();

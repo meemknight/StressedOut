@@ -12,7 +12,7 @@ float stressBuffModifier = 1;
 
  float ChildSPS()
 {
-	return -0.12 * stressModifier;
+	return -0.24 * stressModifier;
 }
 
  float PillSP()
@@ -23,4 +23,14 @@ float stressBuffModifier = 1;
  float CollectorSPS()
  {
 	 return -0.005 * stressModifier;
+ }
+
+ float PostasSPS()
+ {
+	 return +0.005 * stressModifier;
+ }
+
+ float MoneySP()
+ {
+	 return 10 * stressBuffModifier;
  }
