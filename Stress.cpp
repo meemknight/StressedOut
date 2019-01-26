@@ -1,6 +1,6 @@
 #include "Stress.h"
 
-float stressModifier = 1;
+float stressModifier = 3;
 float stressBuffModifier = 1;
 
 

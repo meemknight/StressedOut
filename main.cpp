@@ -36,6 +36,7 @@ int main()
 	sf::Texture angryTexture;
 	sf::Texture dolarTexture;
 	sf::Texture colectorTexture;
+	sf::Texture grafitiTexture;
 
 	sf::View view(sf::FloatRect(0, 0, window.getSize().x, window.getSize().y));
 	
@@ -50,6 +51,7 @@ int main()
 	angryTexture.loadFromFile("stress.png");
 	dolarTexture.loadFromFile("dolar.png");
 	colectorTexture.loadFromFile("Anim\\recuperator.png");
+	grafitiTexture.loadFromFile("Anim//grafittiKid2.png");
 
 	mapSprite.setTexture(textures);
 	
@@ -74,6 +76,11 @@ int main()
 	bool fantomaMoves = 1;
 	sf::Vector2i fantomaDirection = { 0,0 };
 	//fantoma
+
+	Entity grafer(&grafitiTexture);
+	grafer.speed = 0.20f;
+	grafer.setPosition({ 22 * 80, 4 * 80 });
+
 
 	Entity copil(&copilTexture);
 	copil.speed = 0.6;
@@ -135,6 +142,12 @@ int main()
 	bool ballExists = 1;
 	float ballTime = GetTickCount() + rand() % 10000 + 10000;
 
+	Item club(&itemsTextures);
+	setTextureRect(club.sprite, items::club, 0);
+	bool clubExists = 0;
+	float clubTime = GetTickCount() + rand() % 3000 + 3000;
+	sf::Vector2i clubPositions[3] = { {10 * 80, 17 * 80},{7 * 80, 17 * 80},{15 * 80, 2 * 80} };
+	
 	sf::Sprite currentItemSprite;
 	currentItemSprite.setTexture(itemsTextures);
 	currentItemSprite.setPosition(sf::Vector2f(10, screenHeight - 40));
@@ -228,6 +241,39 @@ int main()
 
 		
 		}
+
+		if(GetTickCount() > clubTime)
+		{
+			if(clubExists)
+			{
+				clubTime = GetTickCount() + rand() % 4000 + 4000;
+				clubExists = 0;
+			}else
+			{
+				clubTime = GetTickCount() + rand() % 8000 + 8000;
+				clubExists = 1;
+				int count = sizeof(clubPositions) / sizeof(clubPositions[0]);
+				int r = rand() % count;
+				club.setPosition(clubPositions[r]);
+			}
+		
+		}
+
+		if(clubExists)
+		{
+			if(colides(&mos, &club))
+			{
+				clubExists = 0;
+				clubTime = GetTickCount() + rand() % 9000 + 9000;
+				currentItem = items::club;
+			}
+
+
+
+			club.calculatePadding(GetTickCount());
+			club.draw(&window, deltaTime);
+		}
+
 
 		
 		if(GetTickCount() > ballTime)
@@ -428,6 +474,8 @@ int main()
 		
 
 #pragma endregion
+
+		grafer.draw(&window, deltaTime);
 
 
 		if (GetTickCount() > copilTime)

@@ -30,4 +30,5 @@ footBall,
 pill,
 fork,
 dolar,
+club,
 };
