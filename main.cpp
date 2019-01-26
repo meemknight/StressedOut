@@ -9,6 +9,7 @@
 #include <cstdlib>
 #include "Bar.h"
 #include "Stress.h"
+#include <SFML/Audio.hpp>
 
 unsigned char map[MAPLENGTH][MAPHEIGHT];
 extern sf::Sprite mapSprite;
@@ -24,6 +25,11 @@ int main()
 	window.setVerticalSyncEnabled(1);
 	int screenWith = window.getSize().x;
 	int screenHeight = window.getSize().y;
+
+	sf::Music music;
+	music.openFromFile("music.wav");
+	music.setLoop(1);
+	music.play();
 
 
 	sf::Texture mosTexture;
@@ -80,6 +86,12 @@ int main()
 	Entity grafer(&grafitiTexture);
 	grafer.speed = 0.20f;
 	grafer.setPosition({ 22 * 80, 4 * 80 });
+	bool graferExists = 1;
+	float grafferTime = GetTickCount() + rand() % 15000 + 3000;
+	bool graferRetreating = 0;
+	float grafferChangeDirectionTime = 0;
+	sf::Vector2i graferRetreatingDirection = { 0,0 };
+	sf::Vector2i graferAttackingDirection = { 0,0 };
 
 
 	Entity copil(&copilTexture);
@@ -326,12 +338,12 @@ int main()
 				if (pillExists)
 				{
 					moneyExists[i] = 0;
-					moneyTime[i]= GetTickCount() + rand() % 15000 + 15000;
+					moneyTime[i]= GetTickCount() + rand() % 25000 + 15000;
 				}
 				else
 				{
 					moneyExists[i] = 1;
-					moneyTime[i] = GetTickCount() + rand() % 5000 + 5000;
+					moneyTime[i] = GetTickCount() + rand() % 15000 + 7000;
 				}
 			}
 
@@ -465,22 +477,24 @@ int main()
 			colector.setPosition(sf::Vector2i((MAPLENGTH - 7) * 80, (rand() % (80 * 5)) + (80 * 2)));
 		}
 
-
-		if (colides(&mos, &colector))
+		if(collectorActive)
 		{
-			moneyValue += CollectorSPS() * deltaTime;
+			if (colides(&mos, &colector))
+			{
+				moneyValue += CollectorSPS() * deltaTime;
+			}
 		}
+		
 	
 		
 
 #pragma endregion
 
-		grafer.draw(&window, deltaTime);
 
 
 		if (GetTickCount() > copilTime)
 		{
-			copilTime = GetTickCount() + rand() % 500;
+			copilTime = GetTickCount() + rand() % 1000 + 100;
 			int r = rand() % 3;
 			if (r == 0)
 			{
@@ -571,6 +585,126 @@ int main()
 		fixCollisionWall(copil);
 		fixCollision(copil);
 		copil.draw(&window, deltaTime);
+
+
+#pragma region grafer
+
+		if(GetTickCount() > grafferTime)
+		{
+			grafferTime = GetTickCount() + rand() % 12000 + 10000;
+			if (!graferExists)
+			{
+				graferExists = 1;
+				graferRetreating = 0;
+			}else
+			{
+				graferRetreating = 1;
+				int r = rand() % 2;
+				if(r==0)
+				{
+					graferRetreatingDirection = { 1, -1 };
+				}else
+				{
+					graferRetreatingDirection = { 1, 1 };
+				}
+			}
+		}
+
+		if(graferExists)
+		{
+
+			if(!graferRetreating)
+			{
+				stressValue += GrafferSPS() * deltaTime;
+			}
+
+
+			if(colides(&mos, &grafer))
+			{
+				if(currentItem == items::club && !graferRetreating)
+				{
+					graferRetreating = 1;
+					currentItem = 0;
+					stressValue += GrafferBeatSP();
+				}
+			}
+
+
+
+			if(graferRetreating)
+			{
+				grafer.autoMove(graferRetreatingDirection, deltaTime);
+				grafer.speed = 0.50f;
+			}else
+			{
+				grafer.speed = 0.20f;
+
+				if (grafer.getPosition().x > (GARDENSTART + 5) * 80)
+				{
+					graferAttackingDirection.x = -1;
+				}
+
+				if(grafer.getPosition().x < (GARDENSTART - 1) * 80)
+				{
+					graferAttackingDirection.x = 1;
+					grafer.autoMove(graferAttackingDirection, deltaTime);
+				}else
+				if(abs(mos.getPosition().x - grafer.getPosition().x) > 80 * 3)
+				{
+					//graferAttackingDirection.x = -1;
+					grafer.autoMove(graferAttackingDirection, deltaTime);
+				}else
+				{
+					//graferAttackingDirection.x = 1;
+					grafer.autoMove(graferAttackingDirection, deltaTime);
+				}
+
+			}
+			
+			if(GetTickCount() > grafferChangeDirectionTime)
+			{ 
+				grafferChangeDirectionTime = GetTickCount() + rand() % 4000 + 2000;
+				int r = rand() % 3;
+				if (r == 0)
+				{
+					graferAttackingDirection.y = 1;
+				}
+				else if (r == 1)
+				{
+					graferAttackingDirection.y = -1;
+
+				} else 
+				{
+					graferAttackingDirection.y = 0;
+				}
+			}
+
+			if(!graferRetreating)
+			{
+				fixCollisionWall(grafer);
+			}else
+			if (grafer.position.y < -70 || grafer.position.y >(MAPHEIGHT - 1) * 80 || grafer.position.x > MAPLENGTH * 80)
+			{
+				graferExists = 0;
+				grafferTime = GetTickCount() + rand() % 15000 + 6000;
+				grafer.setPosition(sf::Vector2i((MAPLENGTH - 7) * 80, (rand() % (80 * 5)) + (80 * 2)));
+			}
+
+			if(graferExists)
+			{
+				fixCollision(grafer);
+				grafer.draw(&window, deltaTime);
+			}
+			
+		}
+
+		
+
+
+#pragma endregion
+
+		moneyValue += moneySPS() * deltaTime;
+
 
 
 #pragma region Fantoma
@@ -690,11 +824,15 @@ int main()
 		window.setView(view);
 		mos.draw(&window, deltaTime);
 		
+		if (moneyValue > 100.f) { moneyValue = 100; }
+		if (moneyValue <= 0) { moneyValue = 0; stressValue += moneySPS() * deltaTime; }
+
 		if (stressValue > 100.f) { stressValue = 100; }
+		if (stressValue <= 0) { stressValue = 0; }
 		stressBar.padding = {(int)view.getCenter().x - screenWith / 2, (int)view.getCenter().y - screenHeight /2};
 		stressBar.draw(&window);
 
-		if (moneyValue > 100.f) { moneyValue = 100; }
+		
 		moneyBar.padding = { (int)view.getCenter().x - screenWith / 2, (int)view.getCenter().y - screenHeight / 2 };
 		moneyBar.draw(&window);
 

@@ -37,5 +37,20 @@ float stressBuffModifier = 1;
 
  float BallSP()
  {
-	 return 15 * stressBuffModifier;
+	 return 25 * stressBuffModifier;
  }
+
+ float GrafferBeatSP()
+ {
+	 return 10.f * stressBuffModifier;
+ }
+
+ float GrafferSPS()
+ {
+	 return -0.0003 * stressModifier;
+ }
+
+ float moneySPS()
+ {
+	 return -0.0002 * stressModifier;
+}

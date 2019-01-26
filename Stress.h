@@ -14,3 +14,9 @@
  float MoneySP();
 
  float BallSP();
+
+ float GrafferBeatSP();
+
+ float GrafferSPS();
+
+ float moneySPS();
