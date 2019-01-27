@@ -102,7 +102,7 @@ namespace ma
 		if(backButton != nullptr)
 		{
 			//todo make it set it's position
-			backButton->setPositionX(sparex + 160);
+			backButton->setPositionX(sparex );
 			backButton->setPositionY(sparey + 80);
 			backButton->draw(window);
 			if(backButton->checkInput(window, mouseReleased) != -2)

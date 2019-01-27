@@ -17,6 +17,7 @@ extern sf::Sprite mapSprite;
 int state = states::mainMenu;
 extern bool mouseReleased;
 ma::Menu mainM;
+sf::Texture bigbuttonBrickTexture;
 sf::Texture textButtonTexture;
 sf::Texture smallButtonBrickTexture;
 sf::Texture buttonBrickTexture;
@@ -25,10 +26,114 @@ sf::Texture backButton;
 sf::Font font;
 sf::Music music;
 
+
+float stressValue = 100;
+float moneyValue = 100;
+
+float timeaCount = clock() / 1000;
+float timebCount = clock() / 1000;
+	  
+int highSchore = 123;
+
+	Entity fantoma;
+	float fantomaTime = (rand() %35000) + 5000 + GetTickCount();
+	bool fantomaAwake = 0;
+	float fantomaMoveTime = GetTickCount();
+	bool fantomaMoves = 1;
+	sf::Vector2i fantomaDirection = { 0,0 };
+	bool fantomaReturns = 0;
+
+	Entity grafer;
+	
+	
+	bool graferExists = 1;
+	float grafferTime = GetTickCount() + rand() % 15000 + 3000;
+	bool graferRetreating = 0;
+	float grafferChangeDirectionTime = 0;
+	sf::Vector2i graferRetreatingDirection = { 0,0 };
+	sf::Vector2i graferAttackingDirection = { 0,0 };
+
+	Entity copil;
+	sf::Vector2i copilDIrection = { 0,0 };
+	float copilTime = GetTickCount();
+
+	Entity postas;
+	bool postasExists = 0;
+	float postasTime = GetTickCount() + rand() % 12000 + 12000;
+	float postasMoveTime = GetTickCount();
+	bool postasMoves = 1;
+
+	Entity colector;
+	bool collectorActive = 1;
+	float collectorTime = GetTickCount() + rand() % 15000;
+	sf::Vector2i collectorDirection = { 0,0 };
+	float collectorMoveTime = 0;
+	bool collectorMoves = 0;
+
+	Entity mos;
+
+	bool flowerExists = 0;
+	float flowerTime = GetTickCount() + rand() % 1000 + 1000;
+
+	bool pillExists = 1;
+	float pillTime = GetTickCount() + rand() % 5000 + 7000;
+
+void resetGame()
+{
+	stressValue = 100;
+	moneyValue = 100;
+	timeaCount = clock() / 1000;
+	timebCount = clock() / 1000;
+
+	fantoma.setPosition({ 20 * 80, 80 });
+	 fantomaTime = (rand() % 35000) + 5000 + GetTickCount();
+	 fantomaAwake = 0;
+	 fantomaMoveTime = GetTickCount();
+	 fantomaMoves = 1;
+	 fantomaDirection = { 0,0 };
+	 fantomaReturns = 0;
+
+	 grafer.setPosition({ 32 * 80, 4 * 80 });
+	  graferExists = 0;
+	  grafferTime = GetTickCount() + rand() % 15000 + 3000;
+	  graferRetreating = 0;
+	  grafferChangeDirectionTime = 0;
+	  graferRetreatingDirection = { 0,0 };
+	  graferAttackingDirection = { 0,0 };
+
+	  copil.setPosition({ 80 * 14, 4 * 80 });
+	   copilDIrection = { 0,0 };
+	  copilTime = GetTickCount();
+
+	  postasExists = 0;
+	  postasTime = GetTickCount() + rand() % 12000 + 12000;
+	  postasMoveTime = GetTickCount();
+	  postasMoves = 1;
+	  postas.setPosition({ 80 * 30 + rand() % 160, -90 });
+
+
+	  colector.setPosition(sf::Vector2i((MAPLENGTH - 7) * 80, (rand() % (80 * 5)) + (80 * 2)));
+	   collectorActive = 0;
+	  collectorTime = GetTickCount() + rand() % 15000;
+	  collectorDirection = { 0,0 };
+	  collectorMoveTime = 0;
+	  collectorMoves = 0;
+
+	  mos.position = { 100,100 };
+
+	  flowerExists = 0;
+	  flowerTime = GetTickCount() + rand() % 1000 + 1000;
+
+	  pillExists = 1;
+	  pillTime = GetTickCount() + rand() % 5000 + 7000;
+}
+
 void play()
 {
+	resetGame();
 	state = states::game;
 }
+
 
 void musicOn()
 {
@@ -53,8 +158,6 @@ int main()
 	int screenHeight = window.getSize().y;
 
 	createMenu(&window);
-
-
 
 	music.openFromFile("music.wav");
 	music.setLoop(1);
@@ -85,68 +188,51 @@ int main()
 	dolarTexture.loadFromFile("dolar.png");
 	colectorTexture.loadFromFile("Anim\\recuperator.png");
 	grafitiTexture.loadFromFile("Anim//grafittiKid2.png");
-
+	
 	mapSprite.setTexture(textures);
+
 	
 
 	Bar stressBar(&baraTexture, &angryTexture, sf::Color::Red ,{screenWith - 80 * 6, screenHeight - 100 * 1});
-	float stressValue = 100;
-	float moneyValue = 100;
+	
 	stressBar.value = &stressValue;
 
 	Bar moneyBar(&baraTexture, &dolarTexture, sf::Color::Green, { screenWith - 80 * 6, screenHeight - 50 * 1 });
 	moneyBar.value = &moneyValue;
 
+	sf::Text ceasText;
+	ceasText.setPosition(100, 100);
+	ceasText.setCharacterSize(80);
+	ceasText.setFont(font);
+
 	loadMap("map.txt");
 	
 	
-	Entity fantoma(&fantomaTexture);
-	fantoma.speed = 0.20f;
-	fantoma.setPosition({ 20 * 80, 80 });
-	float fantomaTime = (rand() %35000) + 5000 + GetTickCount();
-	bool fantomaAwake = 0;
-	float fantomaMoveTime = GetTickCount();
-	bool fantomaMoves = 1;
-	sf::Vector2i fantomaDirection = { 0,0 };
-	bool fantomaReturns = 0;
+	fantoma.sprite.setTexture(fantomaTexture);
+	fantoma.speed = 0.21f;
+	
 	//fantoma
 
-	Entity grafer(&grafitiTexture);
+	
+
+	grafer.sprite.setTexture(grafitiTexture);
 	grafer.speed = 0.20f;
-	grafer.setPosition({ 22 * 80, 4 * 80 });
-	bool graferExists = 1;
-	float grafferTime = GetTickCount() + rand() % 15000 + 3000;
-	bool graferRetreating = 0;
-	float grafferChangeDirectionTime = 0;
-	sf::Vector2i graferRetreatingDirection = { 0,0 };
-	sf::Vector2i graferAttackingDirection = { 0,0 };
 
 
-	Entity copil(&copilTexture);
+	copil.sprite.setTexture(copilTexture);
 	copil.speed = 0.6;
-	copil.setPosition({80 * 14, 4 * 80});
-	sf::Vector2i copilDIrection = { 0,0 };
-	float copilTime = GetTickCount();
 
-	Entity postas(&postasTexture);
-	bool postasExists = 0;
-	float postasTime = GetTickCount() + rand() % 12000 + 12000;
+	
+	postas.sprite.setTexture(postasTexture);
 	postas.speed = 0.20f;
-	float postasMoveTime = GetTickCount();
-	postas.setPosition({ 80 * 30 + rand() % 160, -90 });
-	bool postasMoves = 1;
+	
 
-	Entity colector(&colectorTexture);
-	colector.setPosition(sf::Vector2i((MAPLENGTH - 7) * 80 , (rand()%(80*5))+(80*2)));
-	bool collectorActive = 1;
-	float collectorTime = GetTickCount() + rand() % 15000; +15000;
-	sf::Vector2i collectorDirection = { 0,0 };
+	colector.sprite.setTexture(colectorTexture);
 	colector.speed = 0.35f;
-	float collectorMoveTime = 0;
-	bool collectorMoves = 0;
 
-	Entity mos(&mosTexture);
-	mos.position = { 100,100 };
+
+
+	mos.sprite.setTexture(mosTexture);
 	mos.speed = 0.45f;
 
 	float time = GetTickCount();
@@ -155,8 +241,7 @@ int main()
 	Item pill(&itemsTextures);
 	setTextureRect(pill.sprite, 2, 0);
 	pill.setPosition({ 1 * 80, 17 * 80 });
-	bool pillExists = 1;
-	float pillTime = GetTickCount() + rand() % 5000 + 7000;
+	
 
 	Item money[2] = { &itemsTextures , &itemsTextures };
 	money[0].position = sf::Vector2i(23 * 80, 5 * 80);
@@ -173,6 +258,8 @@ int main()
 	Item fork(&itemsTextures);
 	fork.setPosition(sf::Vector2i{1 * 80, 2 * 80});
 	setTextureRect(fork.sprite, items::fork, 0);
+	bool forkExists = 0;
+	float forkTime = GetTickCount() + rand() % 10000 + 1000;
 
 	Item ball(&itemsTextures);
 	ball.setPosition(sf::Vector2i(25 * 80, 6 * 80));
@@ -188,8 +275,7 @@ int main()
 	
 	Item flower(&itemsTextures);
 	setTextureRect(flower.sprite, items::flower, 0);
-	bool flowerExists = 0;
-	float flowerTime = GetTickCount() + rand() % 1000 + 1000;
+	
 	sf::Vector2i flowerPositions[4] = { {24*80,2*80},{23*80,2*80},{24*80,18*80},{23*80, 18*80} };
 
 	sf::Sprite currentItemSprite;
@@ -197,7 +283,7 @@ int main()
 	currentItemSprite.setPosition(sf::Vector2f(10, screenHeight - 40));
 	int currentItem = 0;
 
-
+	
 
 #pragma region meniu
 
@@ -206,10 +292,8 @@ int main()
 	buttonBrickTexture.loadFromFile("menu//ButtonBrick.png");
 	backgroundBrick.loadFromFile("menu//backgroundBrick.png");
 	backButton.loadFromFile("menu//backButton.png");
-	if(!font.loadFromFile("Font.ttf"))
-	{
-		MessageBox(0,"error", "error loading font", 0);
-	}
+	bigbuttonBrickTexture.loadFromFile("menu//BigButtonBrick.png");
+	font.loadFromFile("slkscr.ttf");
 
 
 	mainM.backButton = new ma::IconButton(0, &backButton, 0);
@@ -222,6 +306,51 @@ int main()
 	ma::MenuHolder* optionMeniu = new ma::MenuHolder;
 	optionMeniu->menu = &mainM;
 
+	ma::MenuHolder* HowToPlay = new ma::MenuHolder;
+	HowToPlay->menu = &mainM;
+
+	ma::MenuHolder *GeneralInfo = new ma::MenuHolder;
+	GeneralInfo->menu = &mainM;
+	ma::ButtonGroup *gr1 = new ma::ButtonGroup(&mainM);
+	gr1->appendElement(new ma::TextButton(&bigbuttonBrickTexture, font,0, "You are an\nold man.\nYour goal\nis to not\nget stressed\nout by others.\nTry to take your\npills and always\nkeep an eye ouy\nfor money", 50));
+	gr1->appendElement(new ma::TextButton(&mosTexture, font, 0 , " "));
+	GeneralInfo->appendElement(gr1);
+
+	ma::MenuHolder *Child = new ma::MenuHolder;
+	Child->menu = &mainM;
+	ma::ButtonGroup *gr2 = new ma::ButtonGroup(&mainM);
+	gr2->appendElement(new ma::TextButton(&bigbuttonBrickTexture, font, 0, "This little\nturd is always\nannoying you.\nTry not to get\nin thoch to him."));
+	gr2->appendElement(new ma::TextButton(&mosTexture, font, 0, ""));
+	Child->appendElement(gr2);
+
+	ma::MenuHolder *TaxCollector = new ma::MenuHolder;
+	TaxCollector->menu = &mainM;
+	ma::ButtonGroup *gr3 = new ma::ButtonGroup(&mainM);
+	gr3->appendElement(new ma::TextButton(&bigbuttonBrickTexture, font, 0, "This is a\nbad person.\nHe wants\nyour money.\nWhen you see\nhim, try to\nhide inside."));
+	gr3->appendElement(new ma::TextButton(&mosTexture, font, 0, ""));
+	TaxCollector->appendElement(gr3);
+
+	ma::MenuHolder *Ghost = new ma::MenuHolder;
+	Ghost->menu = &mainM;
+	ma::ButtonGroup *gr4 = new ma::ButtonGroup(&mainM);
+	gr4->appendElement(new ma::TextButton(&bigbuttonBrickTexture, font, 0, "This is your\nmother in law's\nghost.\nDon't even try\ntalking to her.\n(also,\nshe likes\nflowers)"));
+	gr4->appendElement(new ma::TextButton(&mosTexture, font, 0, ""));
+	Ghost->appendElement(gr4);
+
+	ma::MenuHolder *Grafitty = new ma::MenuHolder;
+	Grafitty->menu = &mainM;
+	ma::ButtonGroup *gr5 = new ma::ButtonGroup(&mainM);
+	gr5->appendElement(new ma::TextButton(&bigbuttonBrickTexture, font, 0, "This a******\nis painting your\nwalls.\nJust get a\nclub and beat\nthe s***\nout of him.\nAlso, if you\ndont, you\nwill get stressed.", 50));
+	gr5->appendElement(new ma::TextButton(&mosTexture, font, 0, ""));
+	Grafitty->appendElement(gr5);
+
+	HowToPlay->appendElement(new ma::TextButton(&buttonBrickTexture, font, GeneralInfo, "General info"));
+	HowToPlay->appendElement(new ma::TextButton(&buttonBrickTexture, font, Child, "Child (plod)"));
+	HowToPlay->appendElement(new ma::TextButton(&buttonBrickTexture, font, TaxCollector, "Tax Collector"));
+	HowToPlay->appendElement(new ma::TextButton(&buttonBrickTexture, font, Ghost, "Ghost"));
+	HowToPlay->appendElement(new ma::TextButton(&buttonBrickTexture, font, Grafitty, "Grafitty Guy"));
+
+
 	ma::ButtonGroup* soundGroup = new ma::ButtonGroup;
 	soundGroup->menu = &mainM;
 
@@ -231,8 +360,9 @@ int main()
 	optionMeniu->appendElement(soundGroup);
 
 	holder->appendElement(new ma::TextButton(&textButtonTexture, font, nullptr, "Stressed Out"));
+	holder->appendElement(new ma::TextButton(&textButtonTexture, font, nullptr, std::string(std::string("High Score ") + minute_sec(highSchore)).c_str() ));
 	holder->appendElement(new ma::TextButton(&buttonBrickTexture, font, new ma::Function(&play), "Play"));
-	holder->appendElement(new ma::TextButton(&buttonBrickTexture, font, nullptr, "How to play..."));
+	holder->appendElement(new ma::TextButton(&buttonBrickTexture, font, HowToPlay, "How to play..."));
 	holder->appendElement(new ma::TextButton(&buttonBrickTexture, font, optionMeniu, "Options"));
 
 
@@ -252,8 +382,12 @@ int main()
 		
 		if(state == states::mainMenu)
 		{
-			
-			mainM.update(mouseReleased);
+			window.setView(sf::View(sf::FloatRect(0, 0, window.getSize().x, window.getSize().y)));
+
+			if (!mainM.update(mouseReleased)) 
+			{
+				window.close();
+			}
 			window.display();
 			window.clear();
 
@@ -376,11 +510,11 @@ int main()
 			{
 				if(flowerExists)
 				{
-					flowerTime = GetTickCount() + rand() % 18000 + 8000;
+					flowerTime = GetTickCount() + rand() % 16000 + 10000;
 					flowerExists = 0;
 				}else
 				{
-					flowerTime = GetTickCount() + rand() % 8000 + 8000;
+					flowerTime = GetTickCount() + rand() % 10000 + 10000;
 					flowerExists = 1;
 					int count = sizeof(flowerPositions) / sizeof(flowerPositions[0]);
 					int r = rand() % count;
@@ -439,15 +573,23 @@ int main()
 
 			}
 
-
-
-			if (colides(&mos, &fork))
+			if(GetTickCount() > forkTime)
 			{
-				currentItem = items::fork;
+				forkExists = !forkExists;
+				forkTime = GetTickCount() + rand() % 7000 + 7000;
 			}
 
-			fork.calculatePadding(GetTickCount());
-			fork.draw(&window, deltaTime);
+			if(forkExists)
+			{
+				if (colides(&mos, &fork))
+				{
+					currentItem = items::fork;
+				}
+
+				fork.calculatePadding(GetTickCount());
+				fork.draw(&window, deltaTime);
+			}
+			
 
 
 
@@ -455,7 +597,7 @@ int main()
 			{
 				if (GetTickCount() > moneyTime[i])
 				{
-					if (moneyExists)
+					if (moneyExists[i])
 					{
 						moneyExists[i] = 0;
 						moneyTime[i] = GetTickCount() + rand() % 25000 + 15000;
@@ -463,7 +605,7 @@ int main()
 					else
 					{
 						moneyExists[i] = 1;
-						moneyTime[i] = GetTickCount() + rand() % 15000 + 10000;
+						moneyTime[i] = GetTickCount() + rand() % 10000 + 10000;
 					}
 				}
 
@@ -472,11 +614,11 @@ int main()
 					if (colides(&mos, &money[i]))
 					{
 						moneyExists[i] = 0;
-						moneyTime[i] = GetTickCount() + rand() % 15000 + 8000;
+						moneyTime[i] = GetTickCount() + rand() % 20000 + 8000;
 						moneyValue += MoneySP();
 					}
 
-
+					
 					money[i].calculatePadding(GetTickCount());
 					money[i].draw(&window, deltaTime);
 
@@ -749,6 +891,8 @@ int main()
 					if (currentItem == items::club && !graferRetreating)
 					{
 						graferRetreating = 1;
+						//grafferChangeDirectionTime = GetTickCount();
+						grafferTime = GetTickCount();
 						currentItem = 0;
 						stressValue += GrafferBeatSP();
 					}
@@ -817,7 +961,7 @@ int main()
 					{
 						graferExists = 0;
 						grafferTime = GetTickCount() + rand() % 15000 + 6000;
-						grafer.setPosition(sf::Vector2i((MAPLENGTH - 7) * 80, (rand() % (80 * 5)) + (80 * 2)));
+						grafer.setPosition(sf::Vector2i((MAPLENGTH - 2) * 80, (rand() % (80 * 5)) + (80 * 2)));
 					}
 
 				if (graferExists)
@@ -850,13 +994,15 @@ int main()
 
 			if (GetTickCount() > fantomaTime)
 			{
-				fantomaTime = (rand() % 25000) + 15000 + GetTickCount();
+				
 				if (fantomaAwake)
 				{
+					fantomaTime = (rand() % 15000) + 10000 + GetTickCount();
 					fantomaAwake = 0;
 				}
 				else
 				{
+					fantomaTime = (rand() % 25000) + 25000 + GetTickCount();
 					fantomaAwake = 1;
 				}
 
@@ -959,7 +1105,7 @@ int main()
 #pragma endregion
 
 
-
+		
 			window.setView(view);
 			mos.draw(&window, deltaTime);
 
@@ -967,7 +1113,7 @@ int main()
 			if (moneyValue <= 0) { moneyValue = 0; stressValue += moneySPS() * deltaTime; }
 
 			if (stressValue > 100.f) { stressValue = 100; }
-			if (stressValue <= 0) { stressValue = 0; }
+			if (stressValue <= 0) { stressValue = 0; state = states::mainMenu; }
 			float converted = 100 - stressValue;
 			stressBar.value = &converted;
 			stressBar.padding = { (int)view.getCenter().x - screenWith / 2, (int)view.getCenter().y - screenHeight / 2 };
@@ -976,6 +1122,11 @@ int main()
 
 			moneyBar.padding = { (int)view.getCenter().x - screenWith / 2, (int)view.getCenter().y - screenHeight / 2 };
 			moneyBar.draw(&window);
+
+			timebCount = clock() / 1000;
+			ceasText.setString(minute_sec(timebCount - timeaCount));
+			ceasText.setPosition((int)view.getCenter().x - ceasText.getLocalBounds().width / 2, (int)view.getCenter().y - screenHeight / 2 + 50);
+			window.draw(ceasText);
 
 			setTextureRect(currentItemSprite, currentItem, 0);
 			currentItemSprite.setPosition(sf::Vector2f{ (float)view.getCenter().x - screenWith / 2 + (screenWith - 560) , (float)view.getCenter().y - screenHeight / 2 + screenHeight - 90 });

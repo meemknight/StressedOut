@@ -8,7 +8,7 @@
 void handleEvents(sf::RenderWindow &window);
 void setTextureRect(sf::Sprite &s, int x, int y = 0, bool reversed = 0);
 void createMenu(sf::RenderWindow *wind);
-
+std::string minute_sec(int sec);
 
 enum tiles
 {

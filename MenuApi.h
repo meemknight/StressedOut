@@ -109,7 +109,7 @@ namespace ma
 		sf::Font font;
 	public:
 		TextButton() {};
-		TextButton(sf::Texture *t, sf::Font f, ButtonAccesseble* action, const char* text = nullptr, int textSize = 30, sf::Color color = sf::Color::Black)			
+		TextButton(sf::Texture *t, sf::Font f, ButtonAccesseble* action, const char* text = nullptr, int textSize = 60, sf::Color color = sf::Color::Black)			
 		{
 			actionType = action;
 			if( t!= nullptr)

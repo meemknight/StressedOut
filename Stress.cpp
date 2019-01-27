@@ -6,7 +6,7 @@ float stressBuffModifier = 1;
 
  float GhostSPS()
 {
-	return -0.005 * stressModifier;
+	return -0.0051 * stressModifier;
 
 }
 
@@ -52,5 +52,5 @@ float stressBuffModifier = 1;
 
  float moneySPS()
  {
-	 return -0.0002 * stressModifier;
+	 return -0.00025 * stressModifier;
 }
