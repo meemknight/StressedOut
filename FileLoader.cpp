@@ -30,5 +30,6 @@ void loadMap(const char * name)
 
 	}
 		
+	file.close();
 
 }

@@ -11,6 +11,7 @@
 #include "Stress.h"
 #include <SFML/Audio.hpp>
 #include "MenuApi.h"
+#include <fstream>
 
 unsigned char map[MAPLENGTH][MAPHEIGHT];
 extern sf::Sprite mapSprite;
@@ -34,6 +35,8 @@ float timeaCount = clock() / 1000;
 float timebCount = clock() / 1000;
 	  
 int highSchore = 123;
+
+int currentItem = 0;
 
 	Entity fantoma;
 	float fantomaTime = (rand() %35000) + 5000 + GetTickCount();
@@ -80,6 +83,8 @@ int highSchore = 123;
 
 void resetGame()
 {
+	currentItem = 0;
+
 	stressValue = 100;
 	moneyValue = 100;
 	timeaCount = clock() / 1000;
@@ -126,6 +131,7 @@ void resetGame()
 
 	  pillExists = 1;
 	  pillTime = GetTickCount() + rand() % 5000 + 7000;
+	  
 }
 
 void play()
@@ -149,6 +155,13 @@ void musicOff()
 int main()
 {	
 	srand(time(0));
+
+	{
+		std::ifstream f;
+		f.open("score.txt");
+		f >> highSchore;
+		f.close();
+	}
 
 
 	sf::RenderWindow window(sf::VideoMode(600, 600), "Stressed Out!", sf::Style::Fullscreen);
@@ -281,7 +294,6 @@ int main()
 	sf::Sprite currentItemSprite;
 	currentItemSprite.setTexture(itemsTextures);
 	currentItemSprite.setPosition(sf::Vector2f(10, screenHeight - 40));
-	int currentItem = 0;
 
 	
 
@@ -299,6 +311,17 @@ int main()
 	mainM.backButton = new ma::IconButton(0, &backButton, 0);
 	mainM.background.setTexture(backgroundBrick);
 	mainM.window = &window;
+
+	sf::Texture ghostTexturePrev;
+	ghostTexturePrev.loadFromFile("menu//ghost.png");
+	sf::Texture copilTexturePrev;
+	copilTexturePrev.loadFromFile("menu//kid.png");
+	sf::Texture grafitiTexturePrev;
+	grafitiTexturePrev.loadFromFile("menu//grafiti.png");
+	sf::Texture postmanTexturePrev;
+	postmanTexturePrev.loadFromFile("menu//Postman.png");
+	sf::Texture colectorTexturePrev;
+	colectorTexturePrev.loadFromFile("menu//TaxCollector.png");
 
 	ma::MenuHolder* holder = new ma::MenuHolder;
 	holder->menu = &mainM;
@@ -320,28 +343,28 @@ int main()
 	Child->menu = &mainM;
 	ma::ButtonGroup *gr2 = new ma::ButtonGroup(&mainM);
 	gr2->appendElement(new ma::TextButton(&bigbuttonBrickTexture, font, 0, "This little\nturd is always\nannoying you.\nTry not to get\nin thoch to him."));
-	gr2->appendElement(new ma::TextButton(&mosTexture, font, 0, ""));
+	gr2->appendElement(new ma::TextButton(&copilTexturePrev, font, 0, ""));
 	Child->appendElement(gr2);
 
 	ma::MenuHolder *TaxCollector = new ma::MenuHolder;
 	TaxCollector->menu = &mainM;
 	ma::ButtonGroup *gr3 = new ma::ButtonGroup(&mainM);
 	gr3->appendElement(new ma::TextButton(&bigbuttonBrickTexture, font, 0, "This is a\nbad person.\nHe wants\nyour money.\nWhen you see\nhim, try to\nhide inside."));
-	gr3->appendElement(new ma::TextButton(&mosTexture, font, 0, ""));
+	gr3->appendElement(new ma::TextButton(&colectorTexturePrev, font, 0, ""));
 	TaxCollector->appendElement(gr3);
 
 	ma::MenuHolder *Ghost = new ma::MenuHolder;
 	Ghost->menu = &mainM;
 	ma::ButtonGroup *gr4 = new ma::ButtonGroup(&mainM);
 	gr4->appendElement(new ma::TextButton(&bigbuttonBrickTexture, font, 0, "This is your\nmother in law's\nghost.\nDon't even try\ntalking to her.\n(also,\nshe likes\nflowers)"));
-	gr4->appendElement(new ma::TextButton(&mosTexture, font, 0, ""));
+	gr4->appendElement(new ma::TextButton(&ghostTexturePrev, font, 0, ""));
 	Ghost->appendElement(gr4);
 
 	ma::MenuHolder *Grafitty = new ma::MenuHolder;
 	Grafitty->menu = &mainM;
 	ma::ButtonGroup *gr5 = new ma::ButtonGroup(&mainM);
 	gr5->appendElement(new ma::TextButton(&bigbuttonBrickTexture, font, 0, "This a******\nis painting your\nwalls.\nJust get a\nclub and beat\nthe s***\nout of him.\nAlso, if you\ndont, you\nwill get stressed.", 50));
-	gr5->appendElement(new ma::TextButton(&mosTexture, font, 0, ""));
+	gr5->appendElement(new ma::TextButton(&grafitiTexturePrev, font, 0, ""));
 	Grafitty->appendElement(gr5);
 
 	HowToPlay->appendElement(new ma::TextButton(&buttonBrickTexture, font, GeneralInfo, "General info"));
@@ -356,15 +379,17 @@ int main()
 
 	soundGroup->appendElement(new ma::TextButton(&smallButtonBrickTexture, font, new ma::Function(musicOn), "ON"));
 	soundGroup->appendElement(new ma::TextButton(&smallButtonBrickTexture, font, new ma::Function(musicOff), "OFF"));
+	optionMeniu->appendElement(new ma::TextButton(&buttonBrickTexture, font, new ma::Function([]() {std::ofstream f("score.txt"); f << 0; f.close(); highSchore = 0; }), "Reset score"));
 	optionMeniu->appendElement(new ma::TextButton(&textButtonTexture, font, 0, "Sound:"));
 	optionMeniu->appendElement(soundGroup);
 
+	auto highScoreButton = new ma::TextButton(&textButtonTexture, font, nullptr, std::string(std::string("High Score ") + minute_sec(highSchore)).c_str());
+
 	holder->appendElement(new ma::TextButton(&textButtonTexture, font, nullptr, "Stressed Out"));
-	holder->appendElement(new ma::TextButton(&textButtonTexture, font, nullptr, std::string(std::string("High Score ") + minute_sec(highSchore)).c_str() ));
+	holder->appendElement(highScoreButton);
 	holder->appendElement(new ma::TextButton(&buttonBrickTexture, font, new ma::Function(&play), "Play"));
 	holder->appendElement(new ma::TextButton(&buttonBrickTexture, font, HowToPlay, "How to play..."));
-	holder->appendElement(new ma::TextButton(&buttonBrickTexture, font, optionMeniu, "Options"));
-
+	holder->appendElement(new ma::TextButton(&buttonBrickTexture, font, optionMeniu, "Options and settings...", 50));
 
 	mainM.mainMenu = holder;
 
@@ -383,6 +408,8 @@ int main()
 		if(state == states::mainMenu)
 		{
 			window.setView(sf::View(sf::FloatRect(0, 0, window.getSize().x, window.getSize().y)));
+
+			highScoreButton->textContent.setString(std::string(std::string("High Score ") + minute_sec(highSchore)).c_str());
 
 			if (!mainM.update(mouseReleased)) 
 			{
@@ -496,7 +523,7 @@ int main()
 				if (colides(&mos, &club))
 				{
 					clubExists = 0;
-					clubTime = GetTickCount() + rand() % 9000 + 9000;
+					clubTime = GetTickCount() + rand() % 9000 + 5000;
 					currentItem = items::club;
 				}
 
@@ -575,8 +602,7 @@ int main()
 
 			if(GetTickCount() > forkTime)
 			{
-				forkExists = !forkExists;
-				forkTime = GetTickCount() + rand() % 7000 + 7000;
+				forkExists = 1;				
 			}
 
 			if(forkExists)
@@ -584,10 +610,15 @@ int main()
 				if (colides(&mos, &fork))
 				{
 					currentItem = items::fork;
+					forkTime = GetTickCount() + rand() % 7000 + 7000;
+					forkExists = 0;
+				}else
+				{
+					fork.calculatePadding(GetTickCount());
+					fork.draw(&window, deltaTime);
 				}
 
-				fork.calculatePadding(GetTickCount());
-				fork.draw(&window, deltaTime);
+				
 			}
 			
 

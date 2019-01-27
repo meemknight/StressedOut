@@ -27,18 +27,40 @@ std::string int_to_str(int integer)
 
 std::string minute_sec(int sec)
 {
-	int minute = sec / 60;
-	int restSec = sec % 60;
 	std::string str;
-	if (minute == 0)
+	if (sec == 0)
 	{
-		str = "00:" + int_to_str(restSec);
+		str = "00:00";
 	}
 	else
 	{
-		str = int_to_str(minute) + ":" + int_to_str(restSec);
-	}
+		int minute = sec / 60;
+		int restSec = sec % 60;
+		std::string strMin, strSec;
+		strMin = int_to_str(minute);
+		strSec = int_to_str(restSec);
+		if (minute < 10)
+		{
+			strMin = "0" + int_to_str(minute);
+		}
+		if (restSec < 10)
+		{
+			strSec = "0" + int_to_str(restSec);
+		}
 
+		if (minute == 0)
+		{
+			str = "00:" + strSec;
+		}
+		else if (restSec == 0)
+		{
+			str = strMin + ":00";
+		}
+		else
+		{
+			str = strMin + ":" + strSec;
+		}
+	}
 	return str;
 }
 
