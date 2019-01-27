@@ -153,7 +153,7 @@ void musicOff()
 
 
 int main()
-{	
+{
 	srand(time(0));
 
 	{
@@ -162,6 +162,23 @@ int main()
 		f >> highSchore;
 		f.close();
 	}
+
+	//save menue
+	class RAII_
+	{
+	public:
+		void(*fp)();
+
+		~RAII_()
+		{
+			fp();
+		}
+	}raii_({[] 
+	{
+		std::ofstream f("score.txt");
+		f << highSchore;
+		f.close();
+	}});
 
 
 	sf::RenderWindow window(sf::VideoMode(600, 600), "Stressed Out!", sf::Style::Fullscreen);
@@ -360,17 +377,25 @@ int main()
 	gr4->appendElement(new ma::TextButton(&ghostTexturePrev, font, 0, ""));
 	Ghost->appendElement(gr4);
 
+	ma::MenuHolder *Postas = new ma::MenuHolder;
+	Postas->menu = &mainM;
+	ma::ButtonGroup *gr5 = new ma::ButtonGroup(&mainM);
+	gr5->appendElement(new ma::TextButton(&bigbuttonBrickTexture, font, 0, "This is the/npostman./nHe gives you/nmoney."));
+	gr5->appendElement(new ma::TextButton(&postmanTexturePrev, font, 0, ""));
+	Postas->appendElement(gr5);
+
 	ma::MenuHolder *Grafitty = new ma::MenuHolder;
 	Grafitty->menu = &mainM;
-	ma::ButtonGroup *gr5 = new ma::ButtonGroup(&mainM);
-	gr5->appendElement(new ma::TextButton(&bigbuttonBrickTexture, font, 0, "This a******\nis painting your\nwalls.\nJust get a\nclub and beat\nthe s***\nout of him.\nAlso, if you\ndont, you\nwill get stressed.", 50));
-	gr5->appendElement(new ma::TextButton(&grafitiTexturePrev, font, 0, ""));
-	Grafitty->appendElement(gr5);
+	ma::ButtonGroup *gr6 = new ma::ButtonGroup(&mainM);
+	gr6->appendElement(new ma::TextButton(&bigbuttonBrickTexture, font, 0, "This a******\nis painting your\nwalls.\nJust get a\nclub and beat\nthe s***\nout of him.\nAlso, if you\ndont, you\nwill get stressed.", 50));
+	gr6->appendElement(new ma::TextButton(&grafitiTexturePrev, font, 0, ""));
+	Grafitty->appendElement(gr6);
 
 	HowToPlay->appendElement(new ma::TextButton(&buttonBrickTexture, font, GeneralInfo, "General info"));
 	HowToPlay->appendElement(new ma::TextButton(&buttonBrickTexture, font, Child, "Child (plod)"));
 	HowToPlay->appendElement(new ma::TextButton(&buttonBrickTexture, font, TaxCollector, "Tax Collector"));
 	HowToPlay->appendElement(new ma::TextButton(&buttonBrickTexture, font, Ghost, "Ghost"));
+	HowToPlay->appendElement(new ma::TextButton(&buttonBrickTexture, font, Postas, "Post Man"));
 	HowToPlay->appendElement(new ma::TextButton(&buttonBrickTexture, font, Grafitty, "Grafitty Guy"));
 
 
@@ -389,7 +414,7 @@ int main()
 	holder->appendElement(highScoreButton);
 	holder->appendElement(new ma::TextButton(&buttonBrickTexture, font, new ma::Function(&play), "Play"));
 	holder->appendElement(new ma::TextButton(&buttonBrickTexture, font, HowToPlay, "How to play..."));
-	holder->appendElement(new ma::TextButton(&buttonBrickTexture, font, optionMeniu, "Options and settings...", 50));
+	holder->appendElement(new ma::TextButton(&buttonBrickTexture, font, optionMeniu, "Options and settings...", 40));
 
 	mainM.mainMenu = holder;
 
@@ -1144,7 +1169,16 @@ int main()
 			if (moneyValue <= 0) { moneyValue = 0; stressValue += moneySPS() * deltaTime; }
 
 			if (stressValue > 100.f) { stressValue = 100; }
-			if (stressValue <= 0) { stressValue = 0; state = states::mainMenu; }
+			if (stressValue <= 0) 
+			{	
+				stressValue = 0; state = states::mainMenu; timebCount = clock() / 1000; 
+
+				if(highSchore < timebCount - timeaCount)
+				{
+					highSchore = timebCount - timeaCount;
+				}
+			}
+			
 			float converted = 100 - stressValue;
 			stressBar.value = &converted;
 			stressBar.padding = { (int)view.getCenter().x - screenWith / 2, (int)view.getCenter().y - screenHeight / 2 };
