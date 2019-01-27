@@ -1,4 +1,162 @@
-﻿  main.cpp
+﻿  Bar.cpp
+  drawMap.cpp
+  Entity.cpp
+c:\users\meemk\source\repos\stressedout\stressedout\entity.h(39): warning C4244: 'return': conversion from 'int' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\entity.h(44): warning C4244: 'return': conversion from 'int' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\entity.cpp(34): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\entity.cpp(35): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\entity.cpp(36): warning C4244: '=': conversion from 'T' to 'int', possible loss of data
+          with
+          [
+              T=float
+          ]
+c:\users\meemk\source\repos\stressedout\stressedout\entity.cpp(37): warning C4244: '=': conversion from 'T' to 'int', possible loss of data
+          with
+          [
+              T=float
+          ]
+c:\users\meemk\source\repos\stressedout\stressedout\entity.cpp(55): warning C4244: '=': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+          and
+          [
+              T=int
+          ]
+c:\users\meemk\source\repos\stressedout\stressedout\entity.cpp(73): warning C4244: '=': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+          and
+          [
+              T=int
+          ]
+c:\users\meemk\source\repos\stressedout\stressedout\entity.cpp(90): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\entity.cpp(91): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\entity.cpp(92): warning C4244: '=': conversion from 'T' to 'int', possible loss of data
+          with
+          [
+              T=float
+          ]
+c:\users\meemk\source\repos\stressedout\stressedout\entity.cpp(93): warning C4244: '=': conversion from 'T' to 'int', possible loss of data
+          with
+          [
+              T=float
+          ]
+c:\users\meemk\source\repos\stressedout\stressedout\entity.cpp(110): warning C4244: '=': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+          and
+          [
+              T=int
+          ]
+c:\users\meemk\source\repos\stressedout\stressedout\entity.cpp(128): warning C4244: '=': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+          and
+          [
+              T=int
+          ]
+c:\users\meemk\source\repos\stressedout\stressedout\entity.cpp(155): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\entity.cpp(156): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\entity.cpp(157): warning C4244: '=': conversion from 'T' to 'int', possible loss of data
+          with
+          [
+              T=float
+          ]
+c:\users\meemk\source\repos\stressedout\stressedout\entity.cpp(158): warning C4244: '=': conversion from 'T' to 'int', possible loss of data
+          with
+          [
+              T=float
+          ]
+c:\users\meemk\source\repos\stressedout\stressedout\entity.cpp(174): warning C4244: '=': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+          and
+          [
+              T=int
+          ]
+c:\users\meemk\source\repos\stressedout\stressedout\entity.cpp(192): warning C4244: '=': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+          and
+          [
+              T=int
+          ]
+c:\users\meemk\source\repos\stressedout\stressedout\entity.cpp(210): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\entity.cpp(211): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\entity.cpp(212): warning C4244: '=': conversion from 'T' to 'int', possible loss of data
+          with
+          [
+              T=float
+          ]
+c:\users\meemk\source\repos\stressedout\stressedout\entity.cpp(213): warning C4244: '=': conversion from 'T' to 'int', possible loss of data
+          with
+          [
+              T=float
+          ]
+c:\users\meemk\source\repos\stressedout\stressedout\entity.cpp(230): warning C4244: '=': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+          and
+          [
+              T=int
+          ]
+c:\users\meemk\source\repos\stressedout\stressedout\entity.cpp(248): warning C4244: '=': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+          and
+          [
+              T=int
+          ]
+c:\users\meemk\source\repos\stressedout\stressedout\entity.cpp(276): warning C4244: '=': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+          and
+          [
+              T=int
+          ]
+c:\users\meemk\source\repos\stressedout\stressedout\entity.cpp(278): warning C4244: '=': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+          and
+          [
+              T=int
+          ]
+c:\users\meemk\source\repos\stressedout\stressedout\entity.cpp(292): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\entity.cpp(293): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\entity.cpp(294): warning C4244: '=': conversion from 'T' to 'int', possible loss of data
+          with
+          [
+              T=float
+          ]
+c:\users\meemk\source\repos\stressedout\stressedout\entity.cpp(295): warning C4244: '=': conversion from 'T' to 'int', possible loss of data
+          with
+          [
+              T=float
+          ]
+  events.cpp
+  FileLoader.cpp
+  functions.cpp
+  main.cpp
 c:\users\meemk\source\repos\stressedout\stressedout\entity.h(39): warning C4244: 'return': conversion from 'int' to 'float', possible loss of data
 c:\users\meemk\source\repos\stressedout\stressedout\entity.h(44): warning C4244: 'return': conversion from 'int' to 'float', possible loss of data
 c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(34): warning C4244: 'initializing': conversion from 'clock_t' to 'float', possible loss of data
@@ -100,4 +258,48 @@ c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(1198): warning C424
 c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(1211): warning C4244: '=': conversion from 'clock_t' to 'float', possible loss of data
 c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(1212): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
 c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(1213): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+  MenuApi.cpp
+c:\users\meemk\source\repos\stressedout\stressedout\menuapi.cpp(49): warning C4018: '<': signed/unsigned mismatch
+c:\users\meemk\source\repos\stressedout\stressedout\menuapi.cpp(78): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\menuapi.cpp(153): warning C4018: '<': signed/unsigned mismatch
+c:\users\meemk\source\repos\stressedout\stressedout\menuapi.cpp(174): warning C4244: '-=': conversion from 'T' to 'int', possible loss of data
+          with
+          [
+              T=float
+          ]
+c:\users\meemk\source\repos\stressedout\stressedout\menuapi.cpp(178): warning C4244: '-=': conversion from 'T' to 'int', possible loss of data
+          with
+          [
+              T=float
+          ]
+c:\users\meemk\source\repos\stressedout\stressedout\menuapi.cpp(209): warning C4244: 'return': conversion from 'const T' to 'int', possible loss of data
+          with
+          [
+              T=float
+          ]
+c:\users\meemk\source\repos\stressedout\stressedout\menuapi.cpp(214): warning C4244: 'return': conversion from 'const T' to 'int', possible loss of data
+          with
+          [
+              T=float
+          ]
+c:\users\meemk\source\repos\stressedout\stressedout\menuapi.cpp(281): warning C4244: 'return': conversion from 'const T' to 'int', possible loss of data
+          with
+          [
+              T=float
+          ]
+c:\users\meemk\source\repos\stressedout\stressedout\menuapi.cpp(286): warning C4244: 'return': conversion from 'const T' to 'int', possible loss of data
+          with
+          [
+              T=float
+          ]
+c:\users\meemk\source\repos\stressedout\stressedout\menuapi.cpp(313): warning C4018: '<': signed/unsigned mismatch
+c:\users\meemk\source\repos\stressedout\stressedout\menuapi.cpp(390): warning C4018: '<': signed/unsigned mismatch
+  Stress.cpp
+c:\users\meemk\source\repos\stressedout\stressedout\stress.cpp(9): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\stress.cpp(15): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\stress.cpp(25): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\stress.cpp(30): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\stress.cpp(50): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\stress.cpp(55): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+  Generating Code...
   stressedOut.vcxproj -> C:\Users\meemk\source\repos\stressedOut\Debug\stressedOut.exe
