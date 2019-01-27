@@ -1,0 +1,103 @@
+﻿  main.cpp
+c:\users\meemk\source\repos\stressedout\stressedout\entity.h(39): warning C4244: 'return': conversion from 'int' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\entity.h(44): warning C4244: 'return': conversion from 'int' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(34): warning C4244: 'initializing': conversion from 'clock_t' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(35): warning C4244: 'initializing': conversion from 'clock_t' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(42): warning C4244: 'initializing': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(44): warning C4244: 'initializing': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(53): warning C4244: 'initializing': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(61): warning C4244: 'initializing': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(65): warning C4244: 'initializing': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(66): warning C4244: 'initializing': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(71): warning C4244: 'initializing': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(79): warning C4244: 'initializing': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(82): warning C4244: 'initializing': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(103): warning C4244: '=': conversion from 'clock_t' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(104): warning C4244: '=': conversion from 'clock_t' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(107): warning C4244: '=': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(109): warning C4244: '=': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(116): warning C4244: '=': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(124): warning C4244: '=': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(127): warning C4244: '=': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(128): warning C4244: '=': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(135): warning C4244: '=': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(143): warning C4244: '=': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(146): warning C4244: '=': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(168): warning C4007: 'WinMain': must be '__stdcall'
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(169): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(220): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+          and
+          [
+              T=float
+          ]
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(265): warning C4305: '=': truncation from 'double' to 'float'
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(280): warning C4244: 'initializing': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(293): warning C4838: conversion from 'DWORD' to 'float' requires a narrowing conversion
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(293): warning C4244: 'initializing': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(304): warning C4244: 'initializing': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(310): warning C4244: 'initializing': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(315): warning C4244: 'initializing': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(325): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(448): warning C4244: '=': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(455): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+          and
+          [
+              T=float
+          ]
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(507): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(509): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(510): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(511): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(512): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(524): warning C4244: '=': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(529): warning C4244: '=': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(538): warning C4244: '=': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(543): warning C4244: 'argument': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(553): warning C4244: '=': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(558): warning C4244: '=': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(571): warning C4244: '=': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(577): warning C4244: 'argument': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(585): warning C4244: '=': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(589): warning C4244: '=': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(604): warning C4244: '=': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(608): warning C4244: 'argument': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(621): warning C4244: '=': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(626): warning C4244: '=': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(640): warning C4244: '=': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(658): warning C4244: '=': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(662): warning C4244: 'argument': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(679): warning C4244: '=': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(684): warning C4244: '=': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(693): warning C4244: '=': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(698): warning C4244: 'argument': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(720): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(760): warning C4244: '=': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(815): warning C4244: '=': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(836): warning C4244: '=': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(890): warning C4244: '=': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(919): warning C4244: '=': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(935): warning C4244: '=': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(971): warning C4244: '=': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(1014): warning C4244: '=': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(1039): warning C4244: '=': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(1066): warning C4244: '=': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(1076): warning C4244: '=': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(1081): warning C4244: '=': conversion from 'DWORD' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(1194): warning C4244: '=': conversion from 'clock_t' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(1198): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(1211): warning C4244: '=': conversion from 'clock_t' to 'float', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(1212): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+c:\users\meemk\source\repos\stressedout\stressedout\main.cpp(1213): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+  stressedOut.vcxproj -> C:\Users\meemk\source\repos\stressedOut\Debug\stressedOut.exe

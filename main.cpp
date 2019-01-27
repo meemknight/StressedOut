@@ -27,7 +27,7 @@ sf::Texture backButton;
 sf::Font font;
 sf::Music music;
 
-
+sf::RenderWindow window(sf::VideoMode(600, 600), "Stressed Out!", sf::Style::Fullscreen);
 float stressValue = 100;
 float moneyValue = 100;
 
@@ -80,6 +80,19 @@ int currentItem = 0;
 
 	bool pillExists = 1;
 	float pillTime = GetTickCount() + rand() % 5000 + 7000;
+
+void vsyncOn()
+{
+	window.setVerticalSyncEnabled(1);
+	window.setFramerateLimit(0);
+}
+
+void vsyncOff()
+{
+	window.setVerticalSyncEnabled(0);
+	window.setFramerateLimit(60);
+}
+
 
 void resetGame()
 {
@@ -151,8 +164,7 @@ void musicOff()
 	music.pause();
 }
 
-
-int main()
+int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, char*, int nShowCmd)
 {
 	srand(time(0));
 
@@ -181,7 +193,7 @@ int main()
 	}});
 
 
-	sf::RenderWindow window(sf::VideoMode(600, 600), "Stressed Out!", sf::Style::Fullscreen);
+	
 	//window.setFramerateLimit(50);
 	window.setVerticalSyncEnabled(1);
 	int screenWith = window.getSize().x;
@@ -407,6 +419,14 @@ int main()
 	optionMeniu->appendElement(new ma::TextButton(&buttonBrickTexture, font, new ma::Function([]() {std::ofstream f("score.txt"); f << 0; f.close(); highSchore = 0; }), "Reset score"));
 	optionMeniu->appendElement(new ma::TextButton(&textButtonTexture, font, 0, "Sound:"));
 	optionMeniu->appendElement(soundGroup);
+
+
+	ma::ButtonGroup *vsGroup = new ma::ButtonGroup;
+	vsGroup->menu = &mainM;
+	vsGroup->appendElement(new ma::TextButton(&smallButtonBrickTexture, font, new ma::Function(vsyncOn), "ON"));
+	vsGroup->appendElement(new ma::TextButton(&smallButtonBrickTexture, font, new ma::Function(vsyncOff), "OFF"));
+	optionMeniu->appendElement(new ma::TextButton(&textButtonTexture, font, 0, "Vsync:"));
+	optionMeniu->appendElement(vsGroup);
 
 	auto highScoreButton = new ma::TextButton(&textButtonTexture, font, nullptr, std::string(std::string("High Score ") + minute_sec(highSchore)).c_str());
 
