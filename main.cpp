@@ -10,9 +10,35 @@
 #include "Bar.h"
 #include "Stress.h"
 #include <SFML/Audio.hpp>
+#include "MenuApi.h"
 
 unsigned char map[MAPLENGTH][MAPHEIGHT];
 extern sf::Sprite mapSprite;
+int state = states::mainMenu;
+extern bool mouseReleased;
+ma::Menu mainM;
+sf::Texture textButtonTexture;
+sf::Texture smallButtonBrickTexture;
+sf::Texture buttonBrickTexture;
+sf::Texture backgroundBrick;
+sf::Texture backButton;
+sf::Font font;
+sf::Music music;
+
+void play()
+{
+	state = states::game;
+}
+
+void musicOn()
+{
+	music.play();
+}
+
+void musicOff()
+{
+	music.pause();
+}
 
 
 int main()
@@ -26,11 +52,13 @@ int main()
 	int screenWith = window.getSize().x;
 	int screenHeight = window.getSize().y;
 
-	sf::Music music;
+	createMenu(&window);
+
+
+
 	music.openFromFile("music.wav");
 	music.setLoop(1);
 	music.play();
-
 
 	sf::Texture mosTexture;
 	sf::Texture textures;
@@ -45,7 +73,6 @@ int main()
 	sf::Texture grafitiTexture;
 
 	sf::View view(sf::FloatRect(0, 0, window.getSize().x, window.getSize().y));
-	
 
 	mosTexture.loadFromFile("Anim\\mosAnimat.png");
 	textures.loadFromFile("textures.png");
@@ -77,10 +104,11 @@ int main()
 	fantoma.speed = 0.20f;
 	fantoma.setPosition({ 20 * 80, 80 });
 	float fantomaTime = (rand() %35000) + 5000 + GetTickCount();
-	bool fantomaAwake = 1;
+	bool fantomaAwake = 0;
 	float fantomaMoveTime = GetTickCount();
 	bool fantomaMoves = 1;
 	sf::Vector2i fantomaDirection = { 0,0 };
+	bool fantomaReturns = 0;
 	//fantoma
 
 	Entity grafer(&grafitiTexture);
@@ -123,9 +151,7 @@ int main()
 
 	float time = GetTickCount();
 	float deltaTime = 0;
-
-
-
+	
 	Item pill(&itemsTextures);
 	setTextureRect(pill.sprite, 2, 0);
 	pill.setPosition({ 1 * 80, 17 * 80 });
@@ -160,14 +186,63 @@ int main()
 	float clubTime = GetTickCount() + rand() % 3000 + 3000;
 	sf::Vector2i clubPositions[3] = { {10 * 80, 17 * 80},{7 * 80, 17 * 80},{15 * 80, 2 * 80} };
 	
+	Item flower(&itemsTextures);
+	setTextureRect(flower.sprite, items::flower, 0);
+	bool flowerExists = 0;
+	float flowerTime = GetTickCount() + rand() % 1000 + 1000;
+	sf::Vector2i flowerPositions[4] = { {24*80,2*80},{23*80,2*80},{24*80,18*80},{23*80, 18*80} };
+
 	sf::Sprite currentItemSprite;
 	currentItemSprite.setTexture(itemsTextures);
 	currentItemSprite.setPosition(sf::Vector2f(10, screenHeight - 40));
 	int currentItem = 0;
 
+
+
+#pragma region meniu
+
+	textButtonTexture.loadFromFile("menu//textButton.png");
+	smallButtonBrickTexture.loadFromFile("menu//smallButtonBrick.png");
+	buttonBrickTexture.loadFromFile("menu//ButtonBrick.png");
+	backgroundBrick.loadFromFile("menu//backgroundBrick.png");
+	backButton.loadFromFile("menu//backButton.png");
+	if(!font.loadFromFile("Font.ttf"))
+	{
+		MessageBox(0,"error", "error loading font", 0);
+	}
+
+
+	mainM.backButton = new ma::IconButton(0, &backButton, 0);
+	mainM.background.setTexture(backgroundBrick);
+	mainM.window = &window;
+
+	ma::MenuHolder* holder = new ma::MenuHolder;
+	holder->menu = &mainM;
+	
+	ma::MenuHolder* optionMeniu = new ma::MenuHolder;
+	optionMeniu->menu = &mainM;
+
+	ma::ButtonGroup* soundGroup = new ma::ButtonGroup;
+	soundGroup->menu = &mainM;
+
+	soundGroup->appendElement(new ma::TextButton(&smallButtonBrickTexture, font, new ma::Function(musicOn), "ON"));
+	soundGroup->appendElement(new ma::TextButton(&smallButtonBrickTexture, font, new ma::Function(musicOff), "OFF"));
+	optionMeniu->appendElement(new ma::TextButton(&textButtonTexture, font, 0, "Sound:"));
+	optionMeniu->appendElement(soundGroup);
+
+	holder->appendElement(new ma::TextButton(&textButtonTexture, font, nullptr, "Stressed Out"));
+	holder->appendElement(new ma::TextButton(&buttonBrickTexture, font, new ma::Function(&play), "Play"));
+	holder->appendElement(new ma::TextButton(&buttonBrickTexture, font, nullptr, "How to play..."));
+	holder->appendElement(new ma::TextButton(&buttonBrickTexture, font, optionMeniu, "Options"));
+
+
+	mainM.mainMenu = holder;
+
+#pragma endregion
+
 	while (window.isOpen())
 	{
-
+		
 
 		deltaTime = GetTickCount() - time;
 		time = GetTickCount();
@@ -175,676 +250,747 @@ int main()
 
 		handleEvents(window);
 		
-		//handle key
-
-		sf::Vector2i deplasation = { 0,0 };
-		
-		if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+		if(state == states::mainMenu)
 		{
-			deplasation.x += 1;
-		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-		{
-			deplasation.x -= 1;
-		}
-		if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-		{
-			deplasation.y -= 1;
-		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-		{
-			deplasation.y += 1;
-		}
 			
-		if(deplasation.x != 0 && deplasation.y !=0)
+			mainM.update(mouseReleased);
+			window.display();
+			window.clear();
+
+		}else if(state == states::game)
 		{
-			mos.setPosition({ mos.getPosition().x + (int)(deplasation.x * deltaTime * mos.speed / (float)sqrt(2)), mos.getPosition().y + (int)(deplasation.y * deltaTime * mos.speed / (float)sqrt(2)) });
-		}else
-		{
-			mos.setPosition({ mos.getPosition().x + (int)(deplasation.x * deltaTime * mos.speed), mos.getPosition().y + (int)(deplasation.y * deltaTime * mos.speed)});
-		}
+			//handle key
 
-		//view.setViewport(sf::FloatRect( mos.sprite.getPosition().x - (window.getSize().x /2.f), mos.sprite.getPosition().y - (window.getSize().y / 2.f), window.getSize().x, window.getSize().y ));
-	
-	
+			sf::Vector2i deplasation = { 0,0 };
 
-
-		fixCollisionWall(mos);
-		fixCollision(mos);
-
-
-		view.setCenter((int)mos.getPosition().x, (int)mos.getPosition().y);
-
-		if (view.getCenter().x < screenWith / 2.f) { view.setCenter((int)(screenWith / 2.f), (int)view.getCenter().y); }
-		if (view.getCenter().x > -(screenWith / 2.f) + (80 * MAPLENGTH)) { view.setCenter((int)(-(screenWith / 2.f) + (80 * MAPLENGTH)), (int)view.getCenter().y); }
-		if (view.getCenter().y < screenHeight / 2.f) { view.setCenter((int)(view.getCenter().x), (int)(screenHeight / 2.f)); }
-		if (view.getCenter().y > -(screenHeight / 2.f) + (80 * MAPHEIGHT)) { view.setCenter((int)(view.getCenter().x), (int)(-(screenHeight / 2.f) + (80 * MAPHEIGHT))); }
-		///fix screen position ^
-
-
-		drawMap(&window);
-
-
-		if(GetTickCount() > pillTime)
-		{
-			if(pillExists)
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 			{
-				pillExists = 0;
-				pillTime = GetTickCount() + rand()%10000 + 15000;
-			}else
-			{
-				pillExists = 1;
-				pillTime = GetTickCount() + rand() % 10000 + 5000;
+				deplasation.x += 1;
 			}
-		}
-
-		if(pillExists)
-		{
-			if(colides(&mos, &pill))
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 			{
-				pillExists = 0;
-				pillTime = GetTickCount() + rand() % 10000 + 15000;
-				stressValue += PillSP();
+				deplasation.x -= 1;
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+			{
+				deplasation.y -= 1;
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+			{
+				deplasation.y += 1;
 			}
 
-
-			pill.calculatePadding(GetTickCount());
-			pill.draw(&window, deltaTime);
-
-		
-		}
-
-		if(GetTickCount() > clubTime)
-		{
-			if(clubExists)
+			if (deplasation.x != 0 && deplasation.y != 0)
 			{
-				clubTime = GetTickCount() + rand() % 4000 + 4000;
-				clubExists = 0;
-			}else
-			{
-				clubTime = GetTickCount() + rand() % 8000 + 8000;
-				clubExists = 1;
-				int count = sizeof(clubPositions) / sizeof(clubPositions[0]);
-				int r = rand() % count;
-				club.setPosition(clubPositions[r]);
+				mos.setPosition({ mos.getPosition().x + (int)(deplasation.x * deltaTime * mos.speed / (float)sqrt(2)), mos.getPosition().y + (int)(deplasation.y * deltaTime * mos.speed / (float)sqrt(2)) });
 			}
-		
-		}
-
-		if(clubExists)
-		{
-			if(colides(&mos, &club))
+			else
 			{
-				clubExists = 0;
-				clubTime = GetTickCount() + rand() % 9000 + 9000;
-				currentItem = items::club;
+				mos.setPosition({ mos.getPosition().x + (int)(deplasation.x * deltaTime * mos.speed), mos.getPosition().y + (int)(deplasation.y * deltaTime * mos.speed) });
 			}
 
-
-
-			club.calculatePadding(GetTickCount());
-			club.draw(&window, deltaTime);
-		}
-
-
-		
-		if(GetTickCount() > ballTime)
-		{
-			if(ballExists)
-			{
-				ballExists = 0;
-				ballTime = GetTickCount() + rand() % 20000 + 15000;
-			}else
-			{
-				ballExists = 1;
-				ballTime = GetTickCount() + rand() % 80000 + 8000;
-			}
-		
-		}
-
-		if(ballExists)
-		{
-			ball.draw(&window, deltaTime);
-			
-			if(currentItem == items::fork)
-			{
-				if (colides(&mos, &ball))
-				{
-					ballExists = 0;
-					ballTime = GetTickCount() + rand() % 25000 + 15000;
-					currentItem = 0;
-					stressValue += BallSP();
-				}
-			}
-				
-		}
+			//view.setViewport(sf::FloatRect( mos.sprite.getPosition().x - (window.getSize().x /2.f), mos.sprite.getPosition().y - (window.getSize().y / 2.f), window.getSize().x, window.getSize().y ));
 
 
 
-		if(colides(&mos, &fork))
-		{
-			currentItem = items::fork;
-		}
 
-		fork.calculatePadding(GetTickCount());
-		fork.draw(&window, deltaTime);
+			fixCollisionWall(mos);
+			fixCollision(mos);
 
 
+			view.setCenter((int)mos.getPosition().x, (int)mos.getPosition().y);
 
-		for(int i=0; i<sizeof(money) / sizeof(Item); i++)
-		{
-			if (GetTickCount() > moneyTime[i])
+			if (view.getCenter().x < screenWith / 2.f) { view.setCenter((int)(screenWith / 2.f), (int)view.getCenter().y); }
+			if (view.getCenter().x > -(screenWith / 2.f) + (80 * MAPLENGTH)) { view.setCenter((int)(-(screenWith / 2.f) + (80 * MAPLENGTH)), (int)view.getCenter().y); }
+			if (view.getCenter().y < screenHeight / 2.f) { view.setCenter((int)(view.getCenter().x), (int)(screenHeight / 2.f)); }
+			if (view.getCenter().y > -(screenHeight / 2.f) + (80 * MAPHEIGHT)) { view.setCenter((int)(view.getCenter().x), (int)(-(screenHeight / 2.f) + (80 * MAPHEIGHT))); }
+			///fix screen position ^
+
+
+			drawMap(&window);
+
+
+			if (GetTickCount() > pillTime)
 			{
 				if (pillExists)
 				{
-					moneyExists[i] = 0;
-					moneyTime[i]= GetTickCount() + rand() % 25000 + 15000;
+					pillExists = 0;
+					pillTime = GetTickCount() + rand() % 10000 + 15000;
 				}
 				else
 				{
-					moneyExists[i] = 1;
-					moneyTime[i] = GetTickCount() + rand() % 15000 + 7000;
+					pillExists = 1;
+					pillTime = GetTickCount() + rand() % 10000 + 5000;
 				}
 			}
 
-			if (moneyExists[i])
+			if (pillExists)
 			{
-				if (colides(&mos, &money[i]))
+				if (colides(&mos, &pill))
 				{
-					moneyExists[i] = 0;
-					moneyTime[i] = GetTickCount() + rand() % 15000 + 8000;
-					moneyValue += MoneySP();
+					pillExists = 0;
+					pillTime = GetTickCount() + rand() % 10000 + 15000;
+					stressValue += PillSP();
 				}
 
 
-				money[i].calculatePadding(GetTickCount());
-				money[i].draw(&window, deltaTime);
+				pill.calculatePadding(GetTickCount());
+				pill.draw(&window, deltaTime);
 
 
 			}
-		}
+
+			if (GetTickCount() > clubTime)
+			{
+				if (clubExists)
+				{
+					clubTime = GetTickCount() + rand() % 8000 + 8000;
+					clubExists = 0;
+				}
+				else
+				{
+					clubTime = GetTickCount() + rand() % 8000 + 8000;
+					clubExists = 1;
+					int count = sizeof(clubPositions) / sizeof(clubPositions[0]);
+					int r = rand() % count;
+					club.setPosition(clubPositions[r]);
+				}
+			}
+
+			if (clubExists)
+			{
+				if (colides(&mos, &club))
+				{
+					clubExists = 0;
+					clubTime = GetTickCount() + rand() % 9000 + 9000;
+					currentItem = items::club;
+				}
+
+
+
+				club.calculatePadding(GetTickCount());
+				club.draw(&window, deltaTime);
+			}
+
+			if(GetTickCount() > flowerTime)
+			{
+				if(flowerExists)
+				{
+					flowerTime = GetTickCount() + rand() % 18000 + 8000;
+					flowerExists = 0;
+				}else
+				{
+					flowerTime = GetTickCount() + rand() % 8000 + 8000;
+					flowerExists = 1;
+					int count = sizeof(flowerPositions) / sizeof(flowerPositions[0]);
+					int r = rand() % count;
+					flower.setPosition(flowerPositions[r]);
+				}
+			
+			
+			}
+
+			if(flowerExists)
+			{
+				if(colides(&mos, &flower))
+				{
+					flowerExists = 0;
+					flowerTime = flowerTime = GetTickCount() + rand() % 18000 + 10000;
+					currentItem = items::flower;
+				}
+
+				flower.calculatePadding(GetTickCount());
+				flower.draw(&window, deltaTime);
+			
+			}
+			
+
+
+
+			if (GetTickCount() > ballTime)
+			{
+				if (ballExists)
+				{
+					ballExists = 0;
+					ballTime = GetTickCount() + rand() % 20000 + 15000;
+				}
+				else
+				{
+					ballExists = 1;
+					ballTime = GetTickCount() + rand() % 80000 + 8000;
+				}
+
+			}
+
+			if (ballExists)
+			{
+				ball.draw(&window, deltaTime);
+
+				if (currentItem == items::fork)
+				{
+					if (colides(&mos, &ball))
+					{
+						ballExists = 0;
+						ballTime = GetTickCount() + rand() % 25000 + 15000;
+						currentItem = 0;
+						stressValue += BallSP();
+					}
+				}
+
+			}
+
+
+
+			if (colides(&mos, &fork))
+			{
+				currentItem = items::fork;
+			}
+
+			fork.calculatePadding(GetTickCount());
+			fork.draw(&window, deltaTime);
+
+
+
+			for (int i = 0; i < sizeof(money) / sizeof(Item); i++)
+			{
+				if (GetTickCount() > moneyTime[i])
+				{
+					if (moneyExists)
+					{
+						moneyExists[i] = 0;
+						moneyTime[i] = GetTickCount() + rand() % 25000 + 15000;
+					}
+					else
+					{
+						moneyExists[i] = 1;
+						moneyTime[i] = GetTickCount() + rand() % 15000 + 10000;
+					}
+				}
+
+				if (moneyExists[i])
+				{
+					if (colides(&mos, &money[i]))
+					{
+						moneyExists[i] = 0;
+						moneyTime[i] = GetTickCount() + rand() % 15000 + 8000;
+						moneyValue += MoneySP();
+					}
+
+
+					money[i].calculatePadding(GetTickCount());
+					money[i].draw(&window, deltaTime);
+
+
+				}
+			}
 
 
 
 
 #pragma region Collector
-		
-		if(GetTickCount() > collectorTime)
-		{
-			if(collectorActive)
-			{
-					
-			}else
-			{
 
-				colector.setPosition(sf::Vector2i(80 * (MAPLENGTH - 2), rand() % 1000 + 10));
-				collectorMoveTime = rand() % 2000 + 1000;
-				collectorDirection = { -1, 0 };
-				collectorActive = 1;
-			}
-		}
-		
-		if(collectorActive)
-		{
-			if (mos.getPosition().x >= (GARDENSTART - 1) * 80)
+			if (GetTickCount() > collectorTime)
 			{
-				if (abs(mos.getcenterx() - colector.getcenterx()) < 30)
+				if (collectorActive)
 				{
-					collectorDirection.x = 0;
-				}
-				else if (mos.getPosition().x > colector.getPosition().x)
-				{
-					collectorDirection.x = 1;
+
 				}
 				else
 				{
-					collectorDirection.x = -1;
-				}
-				if (abs(mos.getcentery() - colector.getcentery()) < 30)
-				{
-					collectorDirection.y = 0;
-				}
-				else if (mos.getPosition().y > colector.getPosition().y)
-				{
-					collectorDirection.y = 1;
-				}
-				else
-				{
-					collectorDirection.y = -1;
+
+					colector.setPosition(sf::Vector2i(80 * (MAPLENGTH - 2), rand() % 1000 + 10));
+					collectorMoveTime = rand() % 2000 + 1000;
+					collectorDirection = { -1, 0 };
+					collectorActive = 1;
 				}
 			}
-			else
+
+			if (collectorActive)
 			{
-				//collectorDirection = { 0,0 };
-				if (GetTickCount() > collectorMoveTime)
+				if (mos.getPosition().x >= (GARDENSTART - 1) * 80)
 				{
-					collectorMoveTime = GetTickCount() + rand() % 3000;
-					if (collectorMoves) { collectorMoves = 0; collectorDirection = { 0,0 }; }
+					if (abs(mos.getcenterx() - colector.getcenterx()) < 30)
+					{
+						collectorDirection.x = 0;
+					}
+					else if (mos.getPosition().x > colector.getPosition().x)
+					{
+						collectorDirection.x = 1;
+					}
 					else
 					{
-						collectorMoves = 1;
-						int r = rand() % 5;
-						if (r == 0)
-						{
-							collectorDirection.x = 0;
-						}
-						else if (r == 1)
-						{
-							collectorDirection.x = -1;
-						}
-						else
-						{
-							collectorDirection.x = 1;
-						}
-
-						r = rand() % 3;
-						if (r == 0)
-						{
-							collectorDirection.y = 1;
-						}
-						else if (r == 1)
-						{
-							collectorDirection.y = -1;
-						}
-						else
-						{
-							collectorDirection.y = 0;
-						}
+						collectorDirection.x = -1;
 					}
-
+					if (abs(mos.getcentery() - colector.getcentery()) < 30)
+					{
+						collectorDirection.y = 0;
+					}
+					else if (mos.getPosition().y > colector.getPosition().y)
+					{
+						collectorDirection.y = 1;
+					}
+					else
+					{
+						collectorDirection.y = -1;
+					}
 				}
-			}
-
-			if (colector.getPosition().x < (GARDENSTART - 1) * 80)
-			{
-				if (collectorDirection.x == -1)
+				else
 				{
-					collectorDirection.x = 1;
+					//collectorDirection = { 0,0 };
+					if (GetTickCount() > collectorMoveTime)
+					{
+						collectorMoveTime = GetTickCount() + rand() % 3000;
+						if (collectorMoves) { collectorMoves = 0; collectorDirection = { 0,0 }; }
+						else
+						{
+							collectorMoves = 1;
+							int r = rand() % 5;
+							if (r == 0)
+							{
+								collectorDirection.x = 0;
+							}
+							else if (r == 1)
+							{
+								collectorDirection.x = -1;
+							}
+							else
+							{
+								collectorDirection.x = 1;
+							}
+
+							r = rand() % 3;
+							if (r == 0)
+							{
+								collectorDirection.y = 1;
+							}
+							else if (r == 1)
+							{
+								collectorDirection.y = -1;
+							}
+							else
+							{
+								collectorDirection.y = 0;
+							}
+						}
+
+					}
+				}
+
+				if (colector.getPosition().x < (GARDENSTART - 1) * 80)
+				{
+					if (collectorDirection.x == -1)
+					{
+						collectorDirection.x = 1;
+					}
+				}
+
+				colector.autoMove(collectorDirection, deltaTime);
+				fixCollision(colector);
+
+
+				colector.draw(&window, deltaTime);
+			}
+
+			if (colector.position.y < -70 || colector.position.y >(MAPHEIGHT - 1) * 80 || colector.position.x > MAPLENGTH * 80)
+			{
+				collectorActive = 0;
+				collectorTime = GetTickCount() + rand() % 21000 + 12000;
+				colector.setPosition(sf::Vector2i((MAPLENGTH - 7) * 80, (rand() % (80 * 5)) + (80 * 2)));
+			}
+
+			if (collectorActive)
+			{
+				if (colides(&mos, &colector))
+				{
+					moneyValue += CollectorSPS() * deltaTime;
 				}
 			}
 
-			colector.autoMove(collectorDirection, deltaTime);
-			fixCollision(colector);
 
-			
-			colector.draw(&window, deltaTime);
-		}
 
-		if(colector.position.y < -70 || colector.position.y > (MAPHEIGHT-1) * 80 || colector.position.x > MAPLENGTH * 80)
-		{
-			collectorActive = 0;
-			collectorTime = GetTickCount() + rand() % 21000 + 12000;
-			colector.setPosition(sf::Vector2i((MAPLENGTH - 7) * 80, (rand() % (80 * 5)) + (80 * 2)));
-		}
-
-		if(collectorActive)
-		{
-			if (colides(&mos, &colector))
-			{
-				moneyValue += CollectorSPS() * deltaTime;
-			}
-		}
-		
-	
-		
 
 #pragma endregion
 
 
 
-		if (GetTickCount() > copilTime)
-		{
-			copilTime = GetTickCount() + rand() % 1000 + 100;
-			int r = rand() % 3;
-			if (r == 0)
+			if (GetTickCount() > copilTime)
 			{
-				copilDIrection.x = 1;
-			}
-			else if (r == 1)
-			{
-				copilDIrection.x = -1;
-			}
-			else
-			{
-				copilDIrection.x = 0;
-			}
-
-			r = rand() % 3;
-			if (r == 0)
-			{
-				copilDIrection.y = 1;
-			}
-			else if (r == 1)
-			{
-				copilDIrection.y = -1;
-			}
-			else
-			{
-				copilDIrection.y = 0;
-			}
-
-		}
-
-		if (copil.getPosition().x >= (GARDENSTART -1 ) * 80)
-		{
-			if (copilDIrection.x == 1)
-			{
-				copilDIrection.x = -1;
-			}
-		}
-
-		if(colides(&mos, &copil))
-		{
-			stressValue += ChildSPS();
-		}
-
-
-		if(postasExists)
-		{
-			if(postasMoves)
-			{
-				postas.autoMove({ 0,1 }, deltaTime);
-			}
-			
-			if(GetTickCount() > postasMoveTime)
-			{
-				postasMoveTime = GetTickCount() + rand() % 4000;
-				if(postasMoves)
+				copilTime = GetTickCount() + rand() % 1000 + 100;
+				int r = rand() % 3;
+				if (r == 0)
 				{
-					postasMoves = 0;
-				}else
+					copilDIrection.x = 1;
+				}
+				else if (r == 1)
 				{
-					postasMoves = 1;
+					copilDIrection.x = -1;
+				}
+				else
+				{
+					copilDIrection.x = 0;
+				}
+
+				r = rand() % 3;
+				if (r == 0)
+				{
+					copilDIrection.y = 1;
+				}
+				else if (r == 1)
+				{
+					copilDIrection.y = -1;
+				}
+				else
+				{
+					copilDIrection.y = 0;
+				}
+
+			}
+
+			if (copil.getPosition().x >= (GARDENSTART - 1) * 80)
+			{
+				if (copilDIrection.x == 1)
+				{
+					copilDIrection.x = -1;
 				}
 			}
 
-			//fixCollisionWall(postas);
-			fixCollision(postas);
-			postas.draw(&window, deltaTime);
-			
-			if (colides(&mos, &postas)) 
+			if (colides(&mos, &copil))
 			{
-				moneyValue += PostasSPS() * deltaTime;
+				stressValue += ChildSPS();
 			}
 
-		}else if(GetTickCount() > postasTime )
-		{
-			postasExists = 1;
-		}
 
-		if(postas.getPosition().y > MAPHEIGHT * 80 + 20)
-		{
-			postasExists = 0;
-			postasTime = GetTickCount() + rand() % 15000 + 5000;
-			postas.setPosition({ 80 * 30 + rand() % 160, -90 });
-		}
+			if (postasExists)
+			{
+				if (postasMoves)
+				{
+					postas.autoMove({ 0,1 }, deltaTime);
+				}
+
+				if (GetTickCount() > postasMoveTime)
+				{
+					postasMoveTime = GetTickCount() + rand() % 4000;
+					if (postasMoves)
+					{
+						postasMoves = 0;
+					}
+					else
+					{
+						postasMoves = 1;
+					}
+				}
+
+				//fixCollisionWall(postas);
+				fixCollision(postas);
+				postas.draw(&window, deltaTime);
+
+				if (colides(&mos, &postas))
+				{
+					moneyValue += PostasSPS() * deltaTime;
+				}
+
+			}
+			else if (GetTickCount() > postasTime)
+			{
+				postasExists = 1;
+			}
+
+			if (postas.getPosition().y > MAPHEIGHT * 80 + 20)
+			{
+				postasExists = 0;
+				postasTime = GetTickCount() + rand() % 15000 + 5000;
+				postas.setPosition({ 80 * 30 + rand() % 160, -90 });
+			}
 
 
-		copil.autoMove(copilDIrection, deltaTime);
+			copil.autoMove(copilDIrection, deltaTime);
 
-		fixCollisionWall(copil);
-		fixCollision(copil);
-		copil.draw(&window, deltaTime);
+			fixCollisionWall(copil);
+			fixCollision(copil);
+			copil.draw(&window, deltaTime);
 
 
 #pragma region grafer
 
-		if(GetTickCount() > grafferTime)
-		{
-			grafferTime = GetTickCount() + rand() % 12000 + 10000;
-			if (!graferExists)
+			if (GetTickCount() > grafferTime)
 			{
-				graferExists = 1;
-				graferRetreating = 0;
-			}else
-			{
-				graferRetreating = 1;
-				int r = rand() % 2;
-				if(r==0)
+				grafferTime = GetTickCount() + rand() % 12000 + 10000;
+				if (!graferExists)
 				{
-					graferRetreatingDirection = { 1, -1 };
-				}else
-				{
-					graferRetreatingDirection = { 1, 1 };
+					graferExists = 1;
+					graferRetreating = 0;
 				}
-			}
-		}
-
-		if(graferExists)
-		{
-
-			if(!graferRetreating)
-			{
-				stressValue += GrafferSPS() * deltaTime;
-			}
-
-
-			if(colides(&mos, &grafer))
-			{
-				if(currentItem == items::club && !graferRetreating)
+				else
 				{
 					graferRetreating = 1;
-					currentItem = 0;
-					stressValue += GrafferBeatSP();
+					int r = rand() % 2;
+					if (r == 0)
+					{
+						graferRetreatingDirection = { 1, -1 };
+					}
+					else
+					{
+						graferRetreatingDirection = { 1, 1 };
+					}
 				}
 			}
 
-
-
-			if(graferRetreating)
+			if (graferExists)
 			{
-				grafer.autoMove(graferRetreatingDirection, deltaTime);
-				grafer.speed = 0.50f;
-			}else
-			{
-				grafer.speed = 0.20f;
 
-				if (grafer.getPosition().x > (GARDENSTART + 5) * 80)
+				if (!graferRetreating)
 				{
-					graferAttackingDirection.x = -1;
+					stressValue += GrafferSPS() * deltaTime;
 				}
 
-				if(grafer.getPosition().x < (GARDENSTART - 1) * 80)
+
+				if (colides(&mos, &grafer))
 				{
-					graferAttackingDirection.x = 1;
-					grafer.autoMove(graferAttackingDirection, deltaTime);
-				}else
-				if(abs(mos.getPosition().x - grafer.getPosition().x) > 80 * 3)
+					if (currentItem == items::club && !graferRetreating)
+					{
+						graferRetreating = 1;
+						currentItem = 0;
+						stressValue += GrafferBeatSP();
+					}
+				}
+
+
+
+				if (graferRetreating)
 				{
-					//graferAttackingDirection.x = -1;
-					grafer.autoMove(graferAttackingDirection, deltaTime);
-				}else
+					grafer.autoMove(graferRetreatingDirection, deltaTime);
+					grafer.speed = 0.50f;
+				}
+				else
 				{
-					//graferAttackingDirection.x = 1;
-					grafer.autoMove(graferAttackingDirection, deltaTime);
+					grafer.speed = 0.20f;
+
+					if (grafer.getPosition().x > (GARDENSTART + 5) * 80)
+					{
+						graferAttackingDirection.x = -1;
+					}
+
+					if (grafer.getPosition().x < (GARDENSTART - 1) * 80)
+					{
+						graferAttackingDirection.x = 1;
+						grafer.autoMove(graferAttackingDirection, deltaTime);
+					}
+					else
+						if (abs(mos.getPosition().x - grafer.getPosition().x) > 80 * 3)
+						{
+							//graferAttackingDirection.x = -1;
+							grafer.autoMove(graferAttackingDirection, deltaTime);
+						}
+						else
+						{
+							//graferAttackingDirection.x = 1;
+							grafer.autoMove(graferAttackingDirection, deltaTime);
+						}
+
+				}
+
+				if (GetTickCount() > grafferChangeDirectionTime)
+				{
+					grafferChangeDirectionTime = GetTickCount() + rand() % 4000 + 2000;
+					int r = rand() % 3;
+					if (r == 0)
+					{
+						graferAttackingDirection.y = 1;
+					}
+					else if (r == 1)
+					{
+						graferAttackingDirection.y = -1;
+
+					}
+					else
+					{
+						graferAttackingDirection.y = 0;
+					}
+				}
+
+				if (!graferRetreating)
+				{
+					fixCollisionWall(grafer);
+				}
+				else
+					if (grafer.position.y < -70 || grafer.position.y >(MAPHEIGHT - 1) * 80 || grafer.position.x > MAPLENGTH * 80)
+					{
+						graferExists = 0;
+						grafferTime = GetTickCount() + rand() % 15000 + 6000;
+						grafer.setPosition(sf::Vector2i((MAPLENGTH - 7) * 80, (rand() % (80 * 5)) + (80 * 2)));
+					}
+
+				if (graferExists)
+				{
+					fixCollision(grafer);
+					grafer.draw(&window, deltaTime);
 				}
 
 			}
-			
-			if(GetTickCount() > grafferChangeDirectionTime)
-			{ 
-				grafferChangeDirectionTime = GetTickCount() + rand() % 4000 + 2000;
-				int r = rand() % 3;
-				if (r == 0)
-				{
-					graferAttackingDirection.y = 1;
-				}
-				else if (r == 1)
-				{
-					graferAttackingDirection.y = -1;
 
-				} else 
-				{
-					graferAttackingDirection.y = 0;
-				}
-			}
 
-			if(!graferRetreating)
-			{
-				fixCollisionWall(grafer);
-			}else
-			if (grafer.position.y < -70 || grafer.position.y >(MAPHEIGHT - 1) * 80 || grafer.position.x > MAPLENGTH * 80)
-			{
-				graferExists = 0;
-				grafferTime = GetTickCount() + rand() % 15000 + 6000;
-				grafer.setPosition(sf::Vector2i((MAPLENGTH - 7) * 80, (rand() % (80 * 5)) + (80 * 2)));
-			}
-
-			if(graferExists)
-			{
-				fixCollision(grafer);
-				grafer.draw(&window, deltaTime);
-			}
-			
-		}
-
-		
 
 
 #pragma endregion
 
-		moneyValue += moneySPS() * deltaTime;
+			moneyValue += moneySPS() * deltaTime;
 
 
 
 #pragma region Fantoma
-		//fantoma
-		if (GetTickCount() > fantomaTime)
-		{
-			fantomaTime = (rand() % 25000) + 5000 + GetTickCount();
-			if (fantomaAwake)
+			//fantoma
+
+			if(colides(&fantoma, &mos) && currentItem == items::flower)
 			{
+				currentItem = 0;
+				fantomaTime = (rand() % 25000) + 15000 + GetTickCount();
 				fantomaAwake = 0;
 			}
-			else
+
+
+			if (GetTickCount() > fantomaTime)
 			{
-				fantomaAwake = 1;
-			}
-
-			fantoma.setPosition({ 20 * 80, 80 });
-		}
-
-		if (fantomaAwake)
-		{
-
-			if (mos.getPosition().x < GARDENSTART * 80)
-			{
-				if (abs(mos.getcenterx() - fantoma.getcenterx()) < 30)
+				fantomaTime = (rand() % 25000) + 15000 + GetTickCount();
+				if (fantomaAwake)
 				{
-					fantomaDirection.x = 0;
-				}
-				else if (mos.getPosition().x > fantoma.getPosition().x)
-				{
-					fantomaDirection.x = 1;
+					fantomaAwake = 0;
 				}
 				else
 				{
-					fantomaDirection.x = -1;
-				}
-				if (abs(mos.getcentery() - fantoma.getcentery()) < 30)
-				{
-					fantomaDirection.y = 0;
-				}
-				else if (mos.getPosition().y > fantoma.getPosition().y)
-				{
-					fantomaDirection.y = 1;
-				}
-				else
-				{
-					fantomaDirection.y = -1;
+					fantomaAwake = 1;
 				}
 
+				fantoma.setPosition({ 20 * 80, 80 });
 			}
-			else
+
+			if (fantomaAwake)
 			{
-				if (GetTickCount() > fantomaMoveTime)
+
+				if (mos.getPosition().x < GARDENSTART * 80)
 				{
-					fantomaMoveTime += rand() % 3000 + 1000;
-					if (fantomaMoves) { fantomaMoves = 0; fantomaDirection = { 0,0 }; }
+					if (abs(mos.getcenterx() - fantoma.getcenterx()) < 30)
+					{
+						fantomaDirection.x = 0;
+					}
+					else if (mos.getPosition().x > fantoma.getPosition().x)
+					{
+						fantomaDirection.x = 1;
+					}
 					else
 					{
-						fantomaMoves = 1;
-						int r = rand() % 3;
-						if (r == 0)
-						{
-							fantomaDirection.x = 1;
-						}
-						else if (r == 1)
-						{
-							fantomaDirection.x = -1;
-						}
-						else
-						{
-							fantomaDirection.x = 0;
-						}
-
-						r = rand() % 3;
-						if (r == 0)
-						{
-							fantomaDirection.y = 1;
-						}
-						else if (r == 1)
-						{
-							fantomaDirection.y = -1;
-						}
-						else
-						{
-							fantomaDirection.y = 0;
-						}
+						fantomaDirection.x = -1;
+					}
+					if (abs(mos.getcentery() - fantoma.getcentery()) < 30)
+					{
+						fantomaDirection.y = 0;
+					}
+					else if (mos.getPosition().y > fantoma.getPosition().y)
+					{
+						fantomaDirection.y = 1;
+					}
+					else
+					{
+						fantomaDirection.y = -1;
 					}
 
 				}
-
-
-
-			}
-
-			if (fantoma.getPosition().x >= (GARDENSTART-1) * 80)
-			{
-				//if (fantomaDirection.x == 1)
+				else
 				{
-					fantomaDirection.x = -1;
+					if (GetTickCount() > fantomaMoveTime)
+					{
+						fantomaMoveTime += rand() % 3000 + 1000;
+						if (fantomaMoves) { fantomaMoves = 0; fantomaDirection = { 0,0 }; }
+						else
+						{
+							fantomaMoves = 1;
+							int r = rand() % 3;
+							if (r == 0)
+							{
+								fantomaDirection.x = 1;
+							}
+							else if (r == 1)
+							{
+								fantomaDirection.x = -1;
+							}
+							else
+							{
+								fantomaDirection.x = 0;
+							}
+
+							r = rand() % 3;
+							if (r == 0)
+							{
+								fantomaDirection.y = 1;
+							}
+							else if (r == 1)
+							{
+								fantomaDirection.y = -1;
+							}
+							else
+							{
+								fantomaDirection.y = 0;
+							}
+						}
+
+					}
+
+
+
+				}
+
+				if (fantoma.getPosition().x >= (GARDENSTART - 1) * 80)
+				{
+					//if (fantomaDirection.x == 1)
+					{
+						fantomaDirection.x = -1;
+					}
+				}
+
+				fantoma.autoMove(fantomaDirection, deltaTime);
+
+				fixCollisionWall(fantoma);
+				fantoma.draw(&window, deltaTime);
+
+				if (colides(&mos, &fantoma))
+				{
+					stressValue += GhostSPS() * deltaTime;
 				}
 			}
-
-			fantoma.autoMove(fantomaDirection, deltaTime);
-
-			fixCollisionWall(fantoma);
-			fantoma.draw(&window, deltaTime);
-
-			if (colides(&mos, &fantoma))
-			{
-				stressValue += GhostSPS() * deltaTime;
-			}
-		}
 #pragma endregion
 
 
 
-		window.setView(view);
-		mos.draw(&window, deltaTime);
+			window.setView(view);
+			mos.draw(&window, deltaTime);
+
+			if (moneyValue > 100.f) { moneyValue = 100; }
+			if (moneyValue <= 0) { moneyValue = 0; stressValue += moneySPS() * deltaTime; }
+
+			if (stressValue > 100.f) { stressValue = 100; }
+			if (stressValue <= 0) { stressValue = 0; }
+			float converted = 100 - stressValue;
+			stressBar.value = &converted;
+			stressBar.padding = { (int)view.getCenter().x - screenWith / 2, (int)view.getCenter().y - screenHeight / 2 };
+			stressBar.draw(&window);
+
+
+			moneyBar.padding = { (int)view.getCenter().x - screenWith / 2, (int)view.getCenter().y - screenHeight / 2 };
+			moneyBar.draw(&window);
+
+			setTextureRect(currentItemSprite, currentItem, 0);
+			currentItemSprite.setPosition(sf::Vector2f{ (float)view.getCenter().x - screenWith / 2 + (screenWith - 560) , (float)view.getCenter().y - screenHeight / 2 + screenHeight - 90 });
+			window.draw(currentItemSprite);
+
+			window.display();
+
+			//std::cout << colector.getPosition().x / 80 << " " << colector.getPosition().y /80 << " "<< mos.getPosition().x /80 <<" " << mos.getPosition().y/80 <<" " << collectorActive <<"\n";
+
+			window.clear();
 		
-		if (moneyValue > 100.f) { moneyValue = 100; }
-		if (moneyValue <= 0) { moneyValue = 0; stressValue += moneySPS() * deltaTime; }
+		}
 
-		if (stressValue > 100.f) { stressValue = 100; }
-		if (stressValue <= 0) { stressValue = 0; }
-		stressBar.padding = {(int)view.getCenter().x - screenWith / 2, (int)view.getCenter().y - screenHeight /2};
-		stressBar.draw(&window);
 
-		
-		moneyBar.padding = { (int)view.getCenter().x - screenWith / 2, (int)view.getCenter().y - screenHeight / 2 };
-		moneyBar.draw(&window);
-
-		setTextureRect(currentItemSprite, currentItem, 0);
-		currentItemSprite.setPosition(sf::Vector2f{ (float)view.getCenter().x - screenWith / 2 + 10, (float)view.getCenter().y - screenHeight / 2 + screenHeight - 80 });
-		window.draw(currentItemSprite);
-
-		window.display();
-
-		//std::cout << colector.getPosition().x / 80 << " " << colector.getPosition().y /80 << " "<< mos.getPosition().x /80 <<" " << mos.getPosition().y/80 <<" " << collectorActive <<"\n";
-		
-		window.clear();
+	
 	}
 
 	return 0;

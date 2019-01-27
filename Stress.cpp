@@ -47,7 +47,7 @@ float stressBuffModifier = 1;
 
  float GrafferSPS()
  {
-	 return -0.0003 * stressModifier;
+	 return -0.0006 * stressModifier;
  }
 
  float moneySPS()
